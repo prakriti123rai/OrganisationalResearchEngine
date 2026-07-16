@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 7%
-Current Milestone: Milestone 1 - Project Foundation complete
-Next Milestone: Milestone 2 - Canonical Data Model
-Demo Readiness: 25%
+Overall Completion: 14%
+Current Milestone: Milestone 2 - Canonical Data Model complete
+Next Milestone: Milestone 3 - Seeded Demo Organization
+Demo Readiness: 30%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 1 |
-| Remaining | 13 |
+| Completed | 2 |
+| Remaining | 12 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 3 |
+| Actual Hours | 8 |
 | Blocked | No |
 
 ---
@@ -35,7 +35,7 @@ Current Branch: main
 | # | Milestone | Status | Est. Hours | Actual Hours | Blocked | Completion Date | Commit Hash | Notes |
 |---|-----------|--------|------------|--------------|----------|----------------|-------------|-------|
 | 1 | Project Foundation | Complete | 3 | 3 | No | 2026-07-16 | Recorded in final response after commit creation - 5bd17f5c3c9b221aec81d9eccc20e940985b2112 | Implemented canonical skeleton, backend/frontend startup, linting, formatting, health endpoint, Docker Compose configuration, PostgreSQL container, Neo4j container, and Docker runtime verification. |
-| 2 | Canonical Data Model | Not Started | 5 |  |  |  |  |  |
+| 2 | Canonical Data Model | Complete | 5 | 5 | No | 2026-07-16 | Recorded in final response after commit creation - 559f9288114b6c63fa0d7284578a94266a572fc2 | Implemented SQLAlchemy canonical data models, Pydantic schemas, Alembic migration, database session configuration, Neo4j labels, Neo4j relationship types, and graph schema initialization. |
 | 3 | Seeded Demo Organization | Not Started | 4 |  |  |  |  |  |
 | 4 | Evidence Service | Not Started | 5 |  |  |  |  |  |
 | 5 | Organizational Graph | Not Started | 4 |  |  |  |  |  |
@@ -55,6 +55,7 @@ Current Branch: main
 
 Overall Completion % = Completed Milestones / 14 x 100.
 Milestone 1 complete = 7%.
+Milestone 2 complete = 14%.
 Milestone 7 complete = 50%.
 Milestone 14 complete = 100%.
 
@@ -129,3 +130,22 @@ Verified Neo4j container health, HTTP endpoint, and Bolt port reachability.
 Verified backend container health and `/health` response with PostgreSQL and Neo4j marked reachable.
 Verified frontend container startup and HTTP 200 response.
 Fixed Docker build issues found during verification by adding Docker ignore files, installing backend certificate support, trusting PyPI hosts during container dependency installation, hardening frontend npm install for the local TLS-intercepting Docker network, and running Next.js through its standalone server.
+
+Milestone 2 started.
+Reviewed the frozen Design Freeze documents, Final Implementation Specification, CODEX instructions, and progress log before implementation.
+Determined Milestone 2 - Canonical Data Model was the next incomplete milestone.
+
+Milestone 2 completed.
+Created the canonical SQLAlchemy model layer for organizations, users, repositories, pull requests, evidence, entities, entity relationships, organizational signals, assumptions, reasoning sessions, actions, and execution history.
+Created Pydantic schemas for the same Milestone 2 data model surface.
+Created database base, session, and Alembic migration configuration.
+Created the initial canonical data model migration and verified upgrade, rollback, and re-upgrade against live PostgreSQL.
+Created Neo4j graph labels and relationship type enums.
+Created graph schema initialization and verified Neo4j constraints and indexes.
+Verified ORM mapper configuration and schema validation.
+Verified backend Ruff linting and Black formatting.
+Verified frontend formatting, ESLint, and production build to preserve completed functionality.
+Verified Docker Compose rebuild and startup.
+Verified backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified frontend HTTP 200 response.
+Verified recent Docker logs contained no runtime errors.
