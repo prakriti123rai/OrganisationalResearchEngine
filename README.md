@@ -59,4 +59,5 @@ curl -X POST http://localhost:8000/organizations/org-demo-apex/graph/sync
 ```
 
 The graph can be read from canonical Postgres data and synced idempotently into Neo4j.
+The frontend dashboard, evidence explorer, and graph view load the seeded organization through the backend APIs.
 Reasoning execution logic remains reserved for later milestones.

@@ -127,6 +127,46 @@ class OrganizationalGraphService:
             edges_synced=graph.edge_count,
         )
 
+    def get_neo4j_graph(
+        self,
+        *,
+        organization_id: str,
+        entity_type: Optional[str] = None,
+        relationship_type: Optional[str] = None,
+        active_only: bool = True,
+        limit: int = 200,
+        offset: int = 0,
+    ) -> OrganizationalGraphRead:
+        self._require_organization(organization_id)
+        if entity_type is not None and entity_type not in ENTITY_LABELS:
+            raise ValidationError(f"Entity type '{entity_type}' is not graphable.")
+        if relationship_type is not None and relationship_type not in RELATIONSHIP_TYPES:
+            raise ValidationError(f"Relationship type '{relationship_type}' is not graphable.")
+
+        settings = get_settings()
+        try:
+            driver = GraphDatabase.driver(
+                settings.neo4j_uri,
+                auth=(settings.neo4j_user, settings.neo4j_password),
+            )
+            try:
+                with driver.session() as session:
+                    graph = session.execute_read(
+                        self._read_neo4j_graph,
+                        organization_id,
+                        entity_type,
+                        relationship_type,
+                        active_only,
+                        limit,
+                        offset,
+                    )
+            finally:
+                driver.close()
+        except (Neo4jError, ServiceUnavailable, OSError) as exc:
+            raise GraphSyncError(f"Neo4j graph read failed: {exc}") from exc
+
+        return graph
+
     def _list_entities(
         self,
         *,
@@ -295,3 +335,132 @@ class OrganizationalGraphService:
 
     def _metadata_json(self, metadata: dict) -> str:
         return json.dumps(metadata, sort_keys=True)
+
+    def _read_neo4j_graph(
+        self,
+        transaction,
+        organization_id: str,
+        entity_type: Optional[str],
+        relationship_type: Optional[str],
+        active_only: bool,
+        limit: int,
+        offset: int,
+    ) -> OrganizationalGraphRead:
+        node_records = transaction.run(
+            """
+            MATCH (n {organization_id: $organization_id})
+            WHERE $entity_type IS NULL OR n.entity_type = $entity_type
+            RETURN n, labels(n) AS labels
+            ORDER BY n.entity_type, n.display_name
+            SKIP $offset
+            LIMIT $limit
+            """,
+            organization_id=organization_id,
+            entity_type=entity_type,
+            offset=offset,
+            limit=limit,
+        )
+        nodes = [
+            self._neo4j_node_to_read(
+                organization_id=organization_id,
+                properties=dict(record["n"]),
+                labels=list(record["labels"]),
+            )
+            for record in node_records
+        ]
+        node_ids = {node.id for node in nodes}
+
+        if not node_ids:
+            return OrganizationalGraphRead(
+                organization_id=organization_id,
+                nodes=[],
+                edges=[],
+                node_count=0,
+                edge_count=0,
+            )
+
+        edge_records = transaction.run(
+            """
+            MATCH (source)-[r {organization_id: $organization_id}]->(target)
+            WHERE source.id IN $node_ids
+              AND target.id IN $node_ids
+              AND ($relationship_type IS NULL OR r.relationship_type = $relationship_type)
+              AND ($active_only = false OR r.active = true)
+            RETURN source.id AS source_entity_id,
+                   target.id AS target_entity_id,
+                   type(r) AS graph_relationship_type,
+                   r
+            ORDER BY r.relationship_type, r.id
+            """,
+            organization_id=organization_id,
+            node_ids=list(node_ids),
+            relationship_type=relationship_type,
+            active_only=active_only,
+        )
+        edges = [
+            self._neo4j_edge_to_read(
+                organization_id=organization_id,
+                source_entity_id=record["source_entity_id"],
+                target_entity_id=record["target_entity_id"],
+                graph_relationship_type=record["graph_relationship_type"],
+                properties=dict(record["r"]),
+            )
+            for record in edge_records
+        ]
+
+        return OrganizationalGraphRead(
+            organization_id=organization_id,
+            nodes=nodes,
+            edges=edges,
+            node_count=len(nodes),
+            edge_count=len(edges),
+        )
+
+    def _neo4j_node_to_read(
+        self,
+        *,
+        organization_id: str,
+        properties: dict,
+        labels: list[str],
+    ) -> GraphNodeRead:
+        return GraphNodeRead(
+            id=properties["id"],
+            organization_id=organization_id,
+            entity_type=properties["entity_type"],
+            label=labels[0] if labels else self._entity_label(properties["entity_type"]).value,
+            display_name=properties["display_name"],
+            description=properties.get("description"),
+            status=properties["status"],
+            extra_metadata=self._parse_metadata(properties.get("metadata_json")),
+            supporting_evidence_ids=sorted(properties.get("supporting_evidence_ids", [])),
+        )
+
+    def _neo4j_edge_to_read(
+        self,
+        *,
+        organization_id: str,
+        source_entity_id: str,
+        target_entity_id: str,
+        graph_relationship_type: str,
+        properties: dict,
+    ) -> GraphEdgeRead:
+        return GraphEdgeRead(
+            id=properties["id"],
+            organization_id=organization_id,
+            source_entity_id=source_entity_id,
+            target_entity_id=target_entity_id,
+            relationship_type=properties["relationship_type"],
+            graph_relationship_type=graph_relationship_type,
+            provenance=properties["provenance"],
+            strength=properties["strength"],
+            active=properties["active"],
+            extra_metadata=self._parse_metadata(properties.get("metadata_json")),
+            supporting_evidence_ids=sorted(properties.get("supporting_evidence_ids", [])),
+            supporting_signal_ids=sorted(properties.get("supporting_signal_ids", [])),
+        )
+
+    def _parse_metadata(self, metadata_json: Optional[str]) -> dict:
+        if not metadata_json:
+            return {}
+        parsed = json.loads(metadata_json)
+        return parsed if isinstance(parsed, dict) else {}
