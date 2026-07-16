@@ -36,7 +36,7 @@ Current Branch: main
 |---|-----------|--------|------------|--------------|----------|----------------|-------------|-------|
 | 1 | Project Foundation | Complete | 3 | 3 | No | 2026-07-16 | Recorded in final response after commit creation - 5bd17f5c3c9b221aec81d9eccc20e940985b2112 | Implemented canonical skeleton, backend/frontend startup, linting, formatting, health endpoint, Docker Compose configuration, PostgreSQL container, Neo4j container, and Docker runtime verification. |
 | 2 | Canonical Data Model | Complete | 5 | 5 | No | 2026-07-16 | Recorded in final response after commit creation - 8e093ffb1650ec84c619743587b5261c98be5f03 | Implemented SQLAlchemy canonical data models, Pydantic schemas, Alembic migration, database session configuration, Neo4j labels, Neo4j relationship types, and graph schema initialization. |
-| 3 | Seeded Demo Organization | Complete | 4 | 4 | No | 2026-07-16 | Recorded in final response after commit creation | Implemented deterministic idempotent demo seed data, local seed command, Docker migration and seed startup, and seed documentation. |
+| 3 | Seeded Demo Organization | Complete | 4 | 4 | No | 2026-07-16 | Recorded in final response after commit creation - b161c7572fb5b83e9a93eec9b45464d32699347d | Implemented deterministic idempotent demo seed data, local seed command, Docker migration and seed startup, and seed documentation. |
 | 4 | Evidence Service | Not Started | 5 |  |  |  |  |  |
 | 5 | Organizational Graph | Not Started | 4 |  |  |  |  |  |
 | 6 | Reasoning Context Builder | Not Started | 5 |  |  |  |  |  |
