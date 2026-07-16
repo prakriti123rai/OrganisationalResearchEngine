@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 21%
-Current Milestone: Milestone 3 - Seeded Demo Organization complete
-Next Milestone: Milestone 4 - Evidence Service
-Demo Readiness: 40%
+Overall Completion: 28%
+Current Milestone: Milestone 4 - Evidence Service complete
+Next Milestone: Milestone 5 - Organizational Graph
+Demo Readiness: 45%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 3 |
-| Remaining | 11 |
+| Completed | 4 |
+| Remaining | 10 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 12 |
+| Actual Hours | 17 |
 | Blocked | No |
 
 ---
@@ -37,7 +37,7 @@ Current Branch: main
 | 1 | Project Foundation | Complete | 3 | 3 | No | 2026-07-16 | Recorded in final response after commit creation - 5bd17f5c3c9b221aec81d9eccc20e940985b2112 | Implemented canonical skeleton, backend/frontend startup, linting, formatting, health endpoint, Docker Compose configuration, PostgreSQL container, Neo4j container, and Docker runtime verification. |
 | 2 | Canonical Data Model | Complete | 5 | 5 | No | 2026-07-16 | Recorded in final response after commit creation - 8e093ffb1650ec84c619743587b5261c98be5f03 | Implemented SQLAlchemy canonical data models, Pydantic schemas, Alembic migration, database session configuration, Neo4j labels, Neo4j relationship types, and graph schema initialization. |
 | 3 | Seeded Demo Organization | Complete | 4 | 4 | No | 2026-07-16 | Recorded in final response after commit creation - b161c7572fb5b83e9a93eec9b45464d32699347d | Implemented deterministic idempotent demo seed data, local seed command, Docker migration and seed startup, and seed documentation. |
-| 4 | Evidence Service | Not Started | 5 |  |  |  |  |  |
+| 4 | Evidence Service | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation | Implemented evidence service logic, evidence HTTP API, canonical evidence filtering, linked evidence creation, and API documentation. |
 | 5 | Organizational Graph | Not Started | 4 |  |  |  |  |  |
 | 6 | Reasoning Context Builder | Not Started | 5 |  |  |  |  |  |
 | 7 | GPT-5.5 Reasoning Engine | Not Started | 5 |  |  |  |  |  |
@@ -172,3 +172,27 @@ Verified Docker Compose rebuild and startup.
 Verified Docker backend startup logs include migration and seed execution before Uvicorn.
 Verified backend `/health` response with PostgreSQL and Neo4j reachable.
 Verified frontend HTTP 200 response.
+
+### 2026-07-17
+
+Milestone 4 started.
+Reviewed CODEX instructions and progress log before implementation.
+The separate Design Freeze Documents and Final Implementation Specification were not present as standalone repository files, so implementation followed the frozen architecture and the next milestone recorded in this progress log.
+Determined Milestone 4 - Evidence Service was the next incomplete milestone.
+
+Milestone 4 completed.
+Created a backend evidence service layer for evidence listing, filtering, lookup, creation, validation, duplicate detection, and canonical evidence linking.
+Created HTTP routes for `GET /organizations/{organization_id}/evidence`, `POST /organizations/{organization_id}/evidence`, and `GET /organizations/{organization_id}/evidence/{evidence_id}`.
+Extended evidence schemas with canonical link id lists for entities, relationships, signals, and assumptions while preserving existing evidence fields.
+Added database session dependency wiring for FastAPI routes.
+Documented Evidence API usage in README.md.
+Verified Alembic upgrade and demo seed execution against live PostgreSQL.
+Verified evidence listing, evidence lookup by id, filtering by linked entity, filtering by source, evidence creation with links, duplicate id conflict handling, organization mismatch validation, and missing evidence not found handling.
+Removed API smoke evidence from the local database after verification to preserve canonical demo seed counts.
+Verified backend Ruff linting and Black formatting.
+Verified frontend formatting, ESLint, and production build to preserve completed functionality.
+Verified Docker Compose rebuild and startup.
+Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified containerized Evidence API response on port 8000.
+Verified frontend HTTP 200 response.
+Verified recent Docker logs contained no runtime errors.

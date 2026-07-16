@@ -19,6 +19,10 @@ class EvidenceCreate(OrmSchema):
     summary: str
     timestamp: datetime
     extra_metadata: Metadata = Field(default_factory=dict)
+    referenced_entity_ids: list[str] = Field(default_factory=list)
+    supported_relationship_ids: list[str] = Field(default_factory=list)
+    supported_signal_ids: list[str] = Field(default_factory=list)
+    supported_assumption_ids: list[str] = Field(default_factory=list)
 
 
 class EvidenceRead(EvidenceCreate):

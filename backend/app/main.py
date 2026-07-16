@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.evidence import router as evidence_router
 from app.config import get_settings
 
 settings = get_settings()
@@ -18,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(evidence_router)
 
 
 def _tcp_reachable(host: str, port: int, timeout_seconds: float = 1.0) -> bool:

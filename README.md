@@ -40,5 +40,15 @@ python -m app.seed.demo_organization
 ```
 
 The seed is idempotent and uses the demo organization id `org-demo-apex`.
-Milestone 3 does not add evidence APIs, graph APIs, or reasoning execution logic.
-Those remain reserved for later milestones.
+
+## Evidence API
+
+Milestone 4 adds the evidence service API:
+
+```bash
+curl http://localhost:8000/organizations/org-demo-apex/evidence
+curl http://localhost:8000/organizations/org-demo-apex/evidence/evidence-pr-checkout-482
+```
+
+Evidence can be listed, filtered, read by id, and created with canonical links to entities, relationships, signals, and assumptions.
+Graph APIs and reasoning execution logic remain reserved for later milestones.
