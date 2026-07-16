@@ -17,8 +17,10 @@ RUN pip install \
     --trusted-host files.pythonhosted.org \
     -r requirements.txt
 
+COPY alembic.ini .
+COPY migrations ./migrations
 COPY app ./app
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "alembic upgrade head && python -m app.seed.demo_organization && uvicorn app.main:app --host 0.0.0.0 --port 8000"]

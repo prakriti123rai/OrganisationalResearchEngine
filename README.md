@@ -1,7 +1,7 @@
 # Organizational Reasoning Engine
 
 ORE is the Organizational Reasoning Engine implementation defined by the frozen design documents.
-Milestone 1 provides only the project foundation.
+The current implementation includes the project foundation, canonical data model, and seeded demo organization.
 
 ## Stack
 
@@ -28,7 +28,17 @@ The frontend runs at `http://localhost:3000`.
 The backend health endpoint runs at `http://localhost:8000/health`.
 Neo4j Browser runs at `http://localhost:7474`.
 
-## Milestone 1 Scope
+## Demo Seed
 
-This milestone intentionally includes no data model, seed data, evidence APIs, graph APIs, or reasoning logic.
-Those are reserved for later milestones.
+Docker backend startup applies migrations and seeds the demo organization automatically.
+For local backend development, run the same seed directly after applying migrations:
+
+```bash
+cd backend
+alembic upgrade head
+python -m app.seed.demo_organization
+```
+
+The seed is idempotent and uses the demo organization id `org-demo-apex`.
+Milestone 3 does not add evidence APIs, graph APIs, or reasoning execution logic.
+Those remain reserved for later milestones.

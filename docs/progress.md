@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 14%
-Current Milestone: Milestone 2 - Canonical Data Model complete
-Next Milestone: Milestone 3 - Seeded Demo Organization
-Demo Readiness: 30%
+Overall Completion: 21%
+Current Milestone: Milestone 3 - Seeded Demo Organization complete
+Next Milestone: Milestone 4 - Evidence Service
+Demo Readiness: 40%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 2 |
-| Remaining | 12 |
+| Completed | 3 |
+| Remaining | 11 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 8 |
+| Actual Hours | 12 |
 | Blocked | No |
 
 ---
@@ -35,8 +35,8 @@ Current Branch: main
 | # | Milestone | Status | Est. Hours | Actual Hours | Blocked | Completion Date | Commit Hash | Notes |
 |---|-----------|--------|------------|--------------|----------|----------------|-------------|-------|
 | 1 | Project Foundation | Complete | 3 | 3 | No | 2026-07-16 | Recorded in final response after commit creation - 5bd17f5c3c9b221aec81d9eccc20e940985b2112 | Implemented canonical skeleton, backend/frontend startup, linting, formatting, health endpoint, Docker Compose configuration, PostgreSQL container, Neo4j container, and Docker runtime verification. |
-| 2 | Canonical Data Model | Complete | 5 | 5 | No | 2026-07-16 | Recorded in final response after commit creation - 559f9288114b6c63fa0d7284578a94266a572fc2 | Implemented SQLAlchemy canonical data models, Pydantic schemas, Alembic migration, database session configuration, Neo4j labels, Neo4j relationship types, and graph schema initialization. |
-| 3 | Seeded Demo Organization | Not Started | 4 |  |  |  |  |  |
+| 2 | Canonical Data Model | Complete | 5 | 5 | No | 2026-07-16 | Recorded in final response after commit creation - 8e093ffb1650ec84c619743587b5261c98be5f03 | Implemented SQLAlchemy canonical data models, Pydantic schemas, Alembic migration, database session configuration, Neo4j labels, Neo4j relationship types, and graph schema initialization. |
+| 3 | Seeded Demo Organization | Complete | 4 | 4 | No | 2026-07-16 | Recorded in final response after commit creation | Implemented deterministic idempotent demo seed data, local seed command, Docker migration and seed startup, and seed documentation. |
 | 4 | Evidence Service | Not Started | 5 |  |  |  |  |  |
 | 5 | Organizational Graph | Not Started | 4 |  |  |  |  |  |
 | 6 | Reasoning Context Builder | Not Started | 5 |  |  |  |  |  |
@@ -149,3 +149,26 @@ Verified Docker Compose rebuild and startup.
 Verified backend `/health` response with PostgreSQL and Neo4j reachable.
 Verified frontend HTTP 200 response.
 Verified recent Docker logs contained no runtime errors.
+
+Milestone 3 started.
+Reviewed CODEX instructions and progress log before implementation.
+The separate Design Freeze Documents and Final Implementation Specification were not present as standalone repository files, so implementation followed the frozen architecture and the next milestone recorded in this progress log.
+Determined Milestone 3 - Seeded Demo Organization was the next incomplete milestone.
+
+Milestone 3 completed.
+Created an idempotent seeded demo organization with organization, team, person, repository, service, external dependency, feature, RFC, runbook, incident, deployment, and pull request entities.
+Seeded canonical repositories, users, pull requests, evidence, relationships, organizational signals, assumptions, and a pending demo reasoning session for checkout PR impact analysis.
+Linked evidence to entities, relationships, signals, and assumptions through the canonical association tables.
+Added a local seed command with `python -m app.seed.demo_organization`.
+Updated Docker backend startup to run Alembic migrations and the demo seed before Uvicorn starts.
+Documented demo seed startup and local seed usage in README.md.
+Verified Alembic upgrade against live PostgreSQL.
+Verified the seed command runs repeatedly without duplicate records.
+Verified persisted demo counts: 1 organization, 25 entities, 4 repositories, 6 users, 3 pull requests, 8 evidence records, 15 relationships, 5 signals, 4 assumptions, and 1 reasoning session.
+Verified support link counts across entity, relationship, signal, and assumption evidence tables.
+Verified backend Ruff linting and Black formatting.
+Verified frontend formatting, ESLint, and production build to preserve completed functionality.
+Verified Docker Compose rebuild and startup.
+Verified Docker backend startup logs include migration and seed execution before Uvicorn.
+Verified backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified frontend HTTP 200 response.
