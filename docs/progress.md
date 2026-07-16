@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 28%
-Current Milestone: Milestone 4 - Evidence Service complete
-Next Milestone: Milestone 5 - Organizational Graph
-Demo Readiness: 45%
+Overall Completion: 36%
+Current Milestone: Milestone 5 - Organizational Graph complete
+Next Milestone: Milestone 6 - Reasoning Context Builder
+Demo Readiness: 48%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 4 |
-| Remaining | 10 |
+| Completed | 5 |
+| Remaining | 9 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 17 |
+| Actual Hours | 21 |
 | Blocked | No |
 
 ---
@@ -38,7 +38,7 @@ Current Branch: main
 | 2 | Canonical Data Model | Complete | 5 | 5 | No | 2026-07-16 | Recorded in final response after commit creation - 8e093ffb1650ec84c619743587b5261c98be5f03 | Implemented SQLAlchemy canonical data models, Pydantic schemas, Alembic migration, database session configuration, Neo4j labels, Neo4j relationship types, and graph schema initialization. |
 | 3 | Seeded Demo Organization | Complete | 4 | 4 | No | 2026-07-16 | Recorded in final response after commit creation - b161c7572fb5b83e9a93eec9b45464d32699347d | Implemented deterministic idempotent demo seed data, local seed command, Docker migration and seed startup, and seed documentation. |
 | 4 | Evidence Service | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - 4b9d84cff85dd923e7f64470940c3afe5361fb16 | Implemented evidence service logic, evidence HTTP API, canonical evidence filtering, linked evidence creation, and API documentation. |
-| 5 | Organizational Graph | Not Started | 4 |  |  |  |  |  |
+| 5 | Organizational Graph | Complete | 4 | 4 | No | 2026-07-17 | Recorded after commit creation - pending | Implemented graph read API, graph schemas, canonical graph service, Neo4j graph sync, graph validation, and API documentation. |
 | 6 | Reasoning Context Builder | Not Started | 5 |  |  |  |  |  |
 | 7 | GPT-5.5 Reasoning Engine | Not Started | 5 |  |  |  |  |  |
 | 8 | Reasoning Timeline | Not Started | 5 |  |  |  |  |  |
@@ -194,5 +194,35 @@ Verified frontend formatting, ESLint, and production build to preserve completed
 Verified Docker Compose rebuild and startup.
 Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
 Verified containerized Evidence API response on port 8000.
+Verified frontend HTTP 200 response.
+Verified recent Docker logs contained no runtime errors.
+
+Milestone 5 started.
+Reviewed CODEX instructions and progress log before implementation.
+The separate Design Freeze Documents and Final Implementation Specification were not present as standalone repository files, so implementation followed the frozen architecture and the next milestone recorded in this progress log.
+Determined Milestone 5 - Organizational Graph was the next incomplete milestone.
+
+Milestone 5 completed.
+Created canonical graph response schemas for nodes, edges, graph reads, and Neo4j sync results.
+Created the organizational graph service for listing graphable entities and active canonical relationships from Postgres.
+Created HTTP routes for `GET /organizations/{organization_id}/graph` and `POST /organizations/{organization_id}/graph/sync`.
+Added graph validation for unknown entity types, relationship types, and missing organizations.
+Added a PullRequest Neo4j label so seeded pull request entities are materialized with a canonical graph label.
+Implemented idempotent Neo4j sync from canonical Postgres entities and relationships.
+Stored canonical metadata in Neo4j as deterministic JSON strings to preserve nested metadata without violating Neo4j property constraints.
+Documented Graph API usage in README.md.
+Verified Alembic upgrade and demo seed execution against live PostgreSQL.
+Verified graph listing returns 25 nodes and 15 edges for the seeded demo organization.
+Verified entity-type filtering for service entities returns 3 nodes and 2 internal service dependency edges.
+Verified relationship-type filtering for affects relationships returns 2 edges.
+Verified invalid graph entity type handling returns HTTP 422.
+Verified missing organization handling returns HTTP 404.
+Verified Neo4j sync returns 25 synced nodes and 15 synced edges.
+Verified direct Neo4j query returns 25 materialized nodes and 15 materialized edges for `org-demo-apex`.
+Verified repeated Neo4j sync remains idempotent.
+Verified backend Ruff linting and Black formatting.
+Verified frontend formatting, ESLint, and production build to preserve completed functionality.
+Verified Docker Compose rebuild and startup.
+Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
 Verified frontend HTTP 200 response.
 Verified recent Docker logs contained no runtime errors.

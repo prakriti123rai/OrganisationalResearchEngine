@@ -51,4 +51,12 @@ curl http://localhost:8000/organizations/org-demo-apex/evidence/evidence-pr-chec
 ```
 
 Evidence can be listed, filtered, read by id, and created with canonical links to entities, relationships, signals, and assumptions.
-Graph APIs and reasoning execution logic remain reserved for later milestones.
+Milestone 5 adds the organizational graph API:
+
+```bash
+curl http://localhost:8000/organizations/org-demo-apex/graph
+curl -X POST http://localhost:8000/organizations/org-demo-apex/graph/sync
+```
+
+The graph can be read from canonical Postgres data and synced idempotently into Neo4j.
+Reasoning execution logic remains reserved for later milestones.

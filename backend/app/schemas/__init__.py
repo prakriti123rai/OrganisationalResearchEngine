@@ -3,6 +3,7 @@ from app.schemas.assumption import AssumptionCreate, AssumptionRead
 from app.schemas.entity import EntityCreate, EntityRead
 from app.schemas.evidence import EvidenceCreate, EvidenceRead
 from app.schemas.execution_history import ExecutionHistoryCreate, ExecutionHistoryRead
+from app.schemas.graph import GraphEdgeRead, GraphNodeRead, GraphSyncRead, OrganizationalGraphRead
 from app.schemas.organization import OrganizationCreate, OrganizationRead
 from app.schemas.organizational_signal import OrganizationalSignalCreate, OrganizationalSignalRead
 from app.schemas.pull_request import PullRequestCreate, PullRequestRead
@@ -24,8 +25,12 @@ __all__ = [
     "EvidenceRead",
     "ExecutionHistoryCreate",
     "ExecutionHistoryRead",
+    "GraphEdgeRead",
+    "GraphNodeRead",
+    "GraphSyncRead",
     "OrganizationCreate",
     "OrganizationRead",
+    "OrganizationalGraphRead",
     "OrganizationalSignalCreate",
     "OrganizationalSignalRead",
     "PullRequestCreate",

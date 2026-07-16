@@ -7,6 +7,7 @@ class EntityLabel(str, Enum):
     PERSON = "Person"
     REPOSITORY = "Repository"
     SERVICE = "Service"
+    PULL_REQUEST = "PullRequest"
     FEATURE = "Feature"
     DOCUMENT = "Document"
     INCIDENT = "Incident"
