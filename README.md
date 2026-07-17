@@ -80,3 +80,14 @@ curl http://localhost:8000/organizations/org-demo-apex/reasoning-sessions/reason
 The engine builds canonical context, executes the configured `gpt-5.5` reasoning model when `OPENAI_API_KEY` is present, persists the structured result on the reasoning session, and returns the same result through the read endpoint.
 The canonical context-to-report API is available at `POST /reason` for callers that already have a reasoning context payload.
 When `OPENAI_API_KEY` is not configured, local development uses a deterministic contract-compatible reasoning path so the application remains runnable.
+Milestone 10 adds the action planning workflow:
+
+```bash
+curl -X POST http://localhost:8000/actions/generate \
+  -H 'Content-Type: application/json' \
+  -d '{"organization_id":"org-demo-apex","reasoning_session_id":"reasoning-demo-pr-482"}'
+curl -X POST http://localhost:8000/actions/action-reasoning-demo-pr-482-runbook-update/approve
+curl -X POST http://localhost:8000/actions/action-reasoning-demo-pr-482-runbook-update/reject
+```
+
+Actions are generated from the persisted reasoning result, stored in PostgreSQL, and require explicit approval before any later execution workflow can use them.

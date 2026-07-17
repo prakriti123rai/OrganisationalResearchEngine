@@ -1,4 +1,10 @@
-from app.schemas.action import ActionCreate, ActionRead
+from app.schemas.action import (
+    ActionCreate,
+    ActionGenerateRequest,
+    ActionPlanRead,
+    ActionRead,
+    ActionUpdateRequest,
+)
 from app.schemas.assumption import AssumptionCreate, AssumptionRead
 from app.schemas.entity import EntityCreate, EntityRead
 from app.schemas.evidence import EvidenceCreate, EvidenceRead
@@ -31,7 +37,10 @@ from app.schemas.user import UserCreate, UserRead
 
 __all__ = [
     "ActionCreate",
+    "ActionGenerateRequest",
+    "ActionPlanRead",
     "ActionRead",
+    "ActionUpdateRequest",
     "AssumptionCreate",
     "AssumptionRead",
     "EntityCreate",

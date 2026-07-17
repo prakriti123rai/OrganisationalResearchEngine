@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 64%
-Current Milestone: Milestone 9 - Impact Report complete
-Next Milestone: Milestone 10 - Suggested Actions
-Demo Readiness: 75%
+Overall Completion: 71%
+Current Milestone: Milestone 10 - Suggested Actions complete
+Next Milestone: Milestone 11 - Execution Center
+Demo Readiness: 80%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 9 |
-| Remaining | 5 |
+| Completed | 10 |
+| Remaining | 4 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 41 |
+| Actual Hours | 45 |
 | Blocked | No |
 
 ---
@@ -43,7 +43,7 @@ Current Branch: main
 | 7 | GPT-5.5 Reasoning Engine | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - c51ada73322d6c4ddb304fe1aeffb32ddbfbcc06 | Implemented GPT-5.5 reasoning engine API, canonical `POST /reason` API, structured reasoning result schema, persisted session reports with prompt version and execution time, deterministic local fallback when `OPENAI_API_KEY` is absent, OpenAI Responses-compatible provider path, seed preservation for completed reasoning sessions, and API documentation. |
 | 8 | Reasoning Timeline | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - a7db39b20b4ef5d810aafdf0bdb09191779be322 | Implemented the inspectable reasoning timeline experience, trace API, progressive stage reveal, artifact cards, clickable evidence inspection, and reasoning workspace UI. |
 | 9 | Impact Report | Complete | 3 | 3 | No | 2026-07-17 | Recorded after commit creation - c5a08d66ea39418c0d570a81bdfbd0b5e7e2bb87 | Implemented the engineering-friendly impact report UI using the existing reasoning trace, affected team and service summaries, risk timeline, confidence display, evidence-backed risk cards, expandable evidence, and evidence selection. |
-| 10 | Suggested Actions | Not Started | 4 |  |  |  |  |  |
+| 10 | Suggested Actions | Complete | 4 | 4 | No | 2026-07-18 | Recorded after commit creation - pending | Implemented persistent organizational action planning, deterministic action generation, approval, rejection, editing, artifact previews, confidence display, and the Suggested Actions UI. |
 | 11 | Execution Center | Not Started | 4 |  |  |  |  |  |
 | 12 | Dashboard & Navigation | Not Started | 3 |  |  |  |  |  |
 | 13 | Demo Polish | Not Started | 5 |  |  |  |  |  |
@@ -59,6 +59,7 @@ Milestone 2 complete = 14%.
 Milestone 7 complete = 50%.
 Milestone 8 complete = 57%.
 Milestone 9 complete = 64%.
+Milestone 10 complete = 71%.
 Milestone 14 complete = 100%.
 
 ---
@@ -332,6 +333,33 @@ Verified confidence and high risk are visible.
 Verified evidence links update the selected evidence panel.
 Verified expandable evidence sections open in the browser.
 Verified no user-facing `Loading...` copy appears in the Impact experience.
+Verified backend compile, Ruff linting, and Black formatting.
+Verified frontend ESLint, Prettier formatting, and production build.
+Verified Docker Compose rebuild and startup.
+Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified frontend HTTP 200 response.
+Verified recent backend and frontend logs contained no runtime errors.
+
+### 2026-07-18
+
+Milestone 10 started.
+Reviewed the provided Design Freeze PDF, the implementation milestones PDF containing the Final Implementation Specification, CODEX instructions, and progress log before implementation.
+Determined Milestone 10 - Suggested Actions was the next incomplete milestone.
+
+Milestone 10 completed.
+Created the action planning service for deterministic, idempotent generation from the persisted reasoning result.
+Created `POST /actions/generate`, `POST /actions/{id}/approve`, `POST /actions/{id}/reject`, and `PATCH /actions/{id}` for the required generate, approval, rejection, and edit workflows.
+Persisted seven generated hero actions in PostgreSQL using the canonical actions table: runbook update, architecture update, reviewer assignment, Slack draft, migration checklist, documentation update, and PR draft summary.
+Preserved the frozen boundary that actions require explicit human approval and nothing executes in this milestone.
+Created the Suggested Actions navigation view, action cards, approval panel, confidence display, artifact preview, edit controls, approve controls, and reject controls.
+Documented the action planning API in README.md.
+Verified action generation returns seven proposed actions with confidence and artifact previews.
+Verified action edit flow persists updated artifact preview text.
+Verified approval persists approved status and approval timestamp.
+Verified rejection persists rejected status.
+Verified regeneration without force preserves edited, approved, and rejected persisted action state.
+Verified browser-rendered Suggested Actions screen shows all generated action types, confidence, artifact preview, edit, approve, reject, and execution-lock messaging.
+Verified browser edit, approval, rejection, and persisted-state reload behavior.
 Verified backend compile, Ruff linting, and Black formatting.
 Verified frontend ESLint, Prettier formatting, and production build.
 Verified Docker Compose rebuild and startup.

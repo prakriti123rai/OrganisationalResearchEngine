@@ -13,6 +13,7 @@ import {
 import {
   BarChart3,
   Brain,
+  ClipboardCheck,
   CircleAlert,
   Database,
   FileText,
@@ -24,6 +25,11 @@ import {
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  ActionCard,
+  type SuggestedAction,
+} from "../components/actions/ActionCard";
+import { ApprovalPanel } from "../components/actions/ApprovalPanel";
 import { Timeline, type TraceStage } from "../components/reasoning/Timeline";
 import {
   ImpactSummary,
@@ -31,7 +37,8 @@ import {
 } from "../components/impact/ImpactSummary";
 import type { ImpactEvidence } from "../components/impact/RiskCard";
 
-type View = "dashboard" | "evidence" | "graph" | "reasoning" | "impact";
+type View =
+  "dashboard" | "evidence" | "graph" | "reasoning" | "impact" | "actions";
 
 type EvidenceRecord = {
   id: string;
@@ -117,6 +124,12 @@ type ReasoningTrace = {
   metadata: Record<string, string | number | boolean | null>;
 };
 
+type ActionPlan = {
+  organization_id: string;
+  reasoning_session_id: string;
+  actions: SuggestedAction[];
+};
+
 const organizationId = "org-demo-apex";
 const reasoningSessionId = "reasoning-demo-pr-482";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -127,6 +140,7 @@ const navigation = [
   { id: "graph" as const, name: "Graph", icon: Network },
   { id: "reasoning" as const, name: "Reasoning", icon: Brain },
   { id: "impact" as const, name: "Impact", icon: Gauge },
+  { id: "actions" as const, name: "Actions", icon: ClipboardCheck },
 ];
 
 const nodeTypeOrder = [
@@ -210,8 +224,10 @@ export default function Home() {
   const [reasoningTrace, setReasoningTrace] = useState<ReasoningTrace | null>(
     null,
   );
+  const [actions, setActions] = useState<SuggestedAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [busyActionId, setBusyActionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function loadData() {
@@ -240,9 +256,20 @@ export default function Home() {
       const traceResult = await fetchJson<ReasoningTrace>(
         `/reason/${reasoningSessionId}?organization_id=${organizationId}&graph_depth=2`,
       );
+      const actionPlan = await fetchJson<ActionPlan>("/actions/generate", {
+        method: "POST",
+        body: JSON.stringify({
+          organization_id: organizationId,
+          reasoning_session_id: reasoningSessionId,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setEvidence(evidenceResult);
       setGraph(graphResult);
       setReasoningTrace(traceResult);
+      setActions(actionPlan.actions);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -251,6 +278,79 @@ export default function Home() {
       );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function approveAction(action: SuggestedAction) {
+    await updateActionStatus(action, "approve");
+  }
+
+  async function rejectAction(action: SuggestedAction) {
+    await updateActionStatus(action, "reject");
+  }
+
+  async function updateActionStatus(
+    action: SuggestedAction,
+    decision: "approve" | "reject",
+  ) {
+    setBusyActionId(action.id);
+    setError(null);
+    try {
+      const updated = await fetchJson<SuggestedAction>(
+        `/actions/${action.id}/${decision}`,
+        {
+          method: "POST",
+        },
+      );
+      setActions((current) =>
+        current.map((item) => (item.id === updated.id ? updated : item)),
+      );
+    } catch (actionError) {
+      setError(
+        actionError instanceof Error
+          ? actionError.message
+          : "Unable to update action status.",
+      );
+    } finally {
+      setBusyActionId(null);
+    }
+  }
+
+  async function saveAction(
+    action: SuggestedAction,
+    changes: {
+      title: string;
+      description: string;
+      artifact_preview: string;
+    },
+  ) {
+    setBusyActionId(action.id);
+    setError(null);
+    try {
+      const updated = await fetchJson<SuggestedAction>(
+        `/actions/${action.id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            organization_id: organizationId,
+            ...changes,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      setActions((current) =>
+        current.map((item) => (item.id === updated.id ? updated : item)),
+      );
+    } catch (actionError) {
+      setError(
+        actionError instanceof Error
+          ? actionError.message
+          : "Unable to save action.",
+      );
+    } finally {
+      setBusyActionId(null);
     }
   }
 
@@ -327,7 +427,11 @@ export default function Home() {
         <header className="flex items-start justify-between gap-6 border-b border-border pb-6">
           <div>
             <div className="text-sm text-muted-foreground">
-              {activeView === "impact" ? "Milestone 9" : "Milestone 8"}
+              {activeView === "actions"
+                ? "Milestone 10"
+                : activeView === "impact"
+                  ? "Milestone 9"
+                  : "Milestone 8"}
             </div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
@@ -335,11 +439,14 @@ export default function Home() {
               {activeView === "graph" && "Organizational Graph"}
               {activeView === "reasoning" && "Reasoning Workspace"}
               {activeView === "impact" && "Impact Report"}
+              {activeView === "actions" && "Suggested Actions"}
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-              {activeView === "reasoning" || activeView === "impact"
-                ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
-                : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
+              {activeView === "actions"
+                ? "Generated engineering actions with human approval controls. Execution remains locked."
+                : activeView === "reasoning" || activeView === "impact"
+                  ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
+                  : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
             </p>
           </div>
           <button
@@ -389,10 +496,102 @@ export default function Home() {
                 trace={reasoningTrace}
               />
             )}
+            {activeView === "actions" && (
+              <SuggestedActions
+                actions={actions}
+                busyActionId={busyActionId}
+                onApprove={approveAction}
+                onReject={rejectAction}
+                onSave={saveAction}
+              />
+            )}
           </div>
         )}
       </section>
     </main>
+  );
+}
+
+function SuggestedActions({
+  actions,
+  busyActionId,
+  onApprove,
+  onReject,
+  onSave,
+}: {
+  actions: SuggestedAction[];
+  busyActionId: string | null;
+  onApprove: (action: SuggestedAction) => void;
+  onReject: (action: SuggestedAction) => void;
+  onSave: (
+    action: SuggestedAction,
+    changes: {
+      title: string;
+      description: string;
+      artifact_preview: string;
+    },
+  ) => void;
+}) {
+  const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
+  const selectedAction =
+    actions.find((action) => action.id === selectedActionId) ??
+    actions[0] ??
+    null;
+  const statusCounts = countBy(actions, (action) => action.status);
+
+  if (actions.length === 0) {
+    return (
+      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+        Preparing safe actions from the reasoning report...
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_420px] gap-5">
+      <section className="min-h-0 overflow-y-auto border border-border bg-background p-5">
+        <div className="grid grid-cols-4 gap-3">
+          <TraceMetric label="Generated" value={actions.length} />
+          <TraceMetric label="Proposed" value={statusCounts.proposed ?? 0} />
+          <TraceMetric label="Approved" value={statusCounts.approved ?? 0} />
+          <TraceMetric label="Rejected" value={statusCounts.rejected ?? 0} />
+        </div>
+
+        <section className="mt-5 border border-border bg-muted p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-base font-semibold">Generated Actions</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                ORE converts the impact report into human-approved engineering
+                work items. Approved actions do not execute until the next
+                milestone.
+              </p>
+            </div>
+            <span className="shrink-0 border border-confidence/40 bg-confidence/10 px-3 py-2 text-xs text-confidence">
+              Confidence visible
+            </span>
+          </div>
+          <div className="mt-4 grid gap-3">
+            {actions.map((action) => (
+              <ActionCard
+                action={action}
+                active={selectedAction?.id === action.id}
+                key={action.id}
+                onSelect={(nextAction) => setSelectedActionId(nextAction.id)}
+              />
+            ))}
+          </div>
+        </section>
+      </section>
+
+      <ApprovalPanel
+        action={selectedAction}
+        busyActionId={busyActionId}
+        onApprove={onApprove}
+        onReject={onReject}
+        onSave={onSave}
+      />
+    </div>
   );
 }
 
