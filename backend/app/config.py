@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -15,6 +16,10 @@ class Settings(BaseSettings):
     neo4j_bolt_port: int = 7687
     neo4j_http_port: int = 7474
     neo4j_auth: str = "neo4j/orepassword"
+    reasoning_model: str = "gpt-5.5"
+    openai_api_key: Optional[str] = None
+    openai_responses_url: str = "https://api.openai.com/v1/responses"
+    openai_timeout_seconds: int = 45
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

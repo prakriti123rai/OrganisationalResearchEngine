@@ -57,6 +57,34 @@ def _link(collection: list[Any], item: Any) -> None:
         collection.append(item)
 
 
+def _upsert_reasoning_session(session: Session, values: dict[str, Any]) -> ReasoningSession:
+    record = session.get(ReasoningSession, values["id"])
+    if record is None:
+        record = ReasoningSession(**values)
+        session.add(record)
+        return record
+
+    preserved_status = record.status
+    preserved_report = record.report
+    preserved_completed_at = record.completed_at
+    preserved_context_metadata = record.context_metadata
+
+    for key, value in values.items():
+        if key != "id":
+            setattr(record, key, value)
+
+    if preserved_status == "completed" and preserved_report is not None:
+        record.status = preserved_status
+        record.report = preserved_report
+        record.completed_at = preserved_completed_at
+        record.context_metadata = {
+            **values.get("context_metadata", {}),
+            **preserved_context_metadata,
+        }
+
+    return record
+
+
 def seed_demo_organization(session: Session) -> dict[str, int]:
     organization = _upsert(
         session,
@@ -871,9 +899,8 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
         ]
     }
 
-    _upsert(
+    _upsert_reasoning_session(
         session,
-        ReasoningSession,
         {
             "id": "reasoning-demo-pr-482",
             "organization_id": organization.id,

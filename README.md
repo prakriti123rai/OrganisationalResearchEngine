@@ -68,4 +68,14 @@ curl http://localhost:8000/organizations/org-demo-apex/pull-requests/pr-checkout
 ```
 
 The context builder assembles pull request, graph neighborhood, evidence, signal, assumption, and sectioned context without invoking GPT.
-Reasoning execution logic remains reserved for later milestones.
+Milestone 7 adds the reasoning execution engine:
+
+```bash
+curl -X POST http://localhost:8000/organizations/org-demo-apex/reasoning-sessions/reasoning-demo-pr-482/run \
+  -H 'Content-Type: application/json' \
+  -d '{"graph_depth":2}'
+curl http://localhost:8000/organizations/org-demo-apex/reasoning-sessions/reasoning-demo-pr-482/result
+```
+
+The engine builds canonical context, executes the configured `gpt-5.5` reasoning model when `OPENAI_API_KEY` is present, persists the structured result on the reasoning session, and returns the same result through the read endpoint.
+When `OPENAI_API_KEY` is not configured, local development uses a deterministic contract-compatible reasoning path so the application remains runnable.
