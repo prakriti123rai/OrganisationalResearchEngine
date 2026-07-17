@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 36%
-Current Milestone: Milestone 5 - Organizational Graph complete
-Next Milestone: Milestone 6 - Reasoning Context Builder
-Demo Readiness: 50%
+Overall Completion: 43%
+Current Milestone: Milestone 6 - Reasoning Context Builder complete
+Next Milestone: Milestone 7 - GPT-5.5 Reasoning Engine
+Demo Readiness: 55%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 5 |
-| Remaining | 9 |
+| Completed | 6 |
+| Remaining | 8 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 23 |
+| Actual Hours | 28 |
 | Blocked | No |
 
 ---
@@ -39,7 +39,7 @@ Current Branch: main
 | 3 | Seeded Demo Organization | Complete | 4 | 4 | No | 2026-07-16 | Recorded in final response after commit creation - b161c7572fb5b83e9a93eec9b45464d32699347d | Implemented deterministic idempotent demo seed data, local seed command, Docker migration and seed startup, and seed documentation. |
 | 4 | Evidence Service | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - 4b9d84cff85dd923e7f64470940c3afe5361fb16 | Implemented evidence service logic, evidence HTTP API, canonical evidence filtering, linked evidence creation, and API documentation. |
 | 5 | Organizational Graph | Complete | 4 | 6 | No | 2026-07-17 | Recorded after audit fix commit creation - a91bf7768135bb98fd672d6a7cfc449dbde253c3 | Implemented graph read API, graph schemas, canonical graph service, Neo4j graph sync, graph validation, frontend dashboard, evidence explorer, graph view, and API documentation. |
-| 6 | Reasoning Context Builder | Not Started | 5 |  |  |  |  |  |
+| 6 | Reasoning Context Builder | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - pending | Implemented deterministic reasoning context schemas, service, session context API, pull request context API, graph/evidence/signal/assumption context assembly, validation, and documentation. |
 | 7 | GPT-5.5 Reasoning Engine | Not Started | 5 |  |  |  |  |  |
 | 8 | Reasoning Timeline | Not Started | 5 |  |  |  |  |  |
 | 9 | Impact Report | Not Started | 3 |  |  |  |  |  |
@@ -236,3 +236,28 @@ Implemented the Organizational Graph view with React Flow and Neo4j-backed graph
 Added a read-only Neo4j graph API route for frontend graph rendering after graph sync.
 Removed Milestone 1 placeholder content from the frontend.
 Verified the frontend is connected to backend APIs instead of static placeholders.
+
+Milestone 6 started.
+Reviewed CODEX instructions and progress log before implementation.
+The separate Design Freeze Documents and Final Implementation Specification were not present as standalone repository files, so implementation followed the frozen architecture and the next milestone recorded in this progress log.
+Determined Milestone 6 - Reasoning Context Builder was the next incomplete milestone.
+
+Milestone 6 completed.
+Created reasoning context response schemas for context scope, context sections, and complete context payloads.
+Created a deterministic reasoning context service that assembles pull request context from canonical Postgres data.
+Created HTTP routes for `GET /organizations/{organization_id}/reasoning-sessions/{reasoning_session_id}/context` and `GET /organizations/{organization_id}/pull-requests/{pull_request_id}/context`.
+Built bounded graph-neighborhood context around the focused pull request entity.
+Collected linked evidence, organizational signals, active assumptions, graph nodes, graph edges, and sectioned context for ownership, dependencies, reviewers, operational readiness, and evidence.
+Kept GPT reasoning execution reserved for Milestone 7.
+Documented Reasoning Context Builder API usage in README.md.
+Verified Alembic upgrade and demo seed execution against live PostgreSQL.
+Verified seeded reasoning session context returns PR `pr-checkout-api-482`, 9 nodes, 9 edges, 8 evidence records, 5 signals, 4 assumptions, and expected context sections.
+Verified pull request context endpoint supports bounded `graph_depth` and returns focused context for `entity-pr-checkout-482`.
+Verified invalid context depth handling returns HTTP 422.
+Verified missing reasoning session handling returns HTTP 404.
+Verified backend Ruff linting and Black formatting.
+Verified frontend formatting, ESLint, and production build to preserve completed functionality.
+Verified Docker Compose rebuild and startup.
+Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified frontend HTTP 200 response.
+Verified recent Docker, backend, frontend, and Neo4j logs contained no runtime errors.

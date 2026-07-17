@@ -60,4 +60,12 @@ curl -X POST http://localhost:8000/organizations/org-demo-apex/graph/sync
 
 The graph can be read from canonical Postgres data and synced idempotently into Neo4j.
 The frontend dashboard, evidence explorer, and graph view load the seeded organization through the backend APIs.
+Milestone 6 adds deterministic reasoning context builder APIs:
+
+```bash
+curl http://localhost:8000/organizations/org-demo-apex/reasoning-sessions/reasoning-demo-pr-482/context
+curl http://localhost:8000/organizations/org-demo-apex/pull-requests/pr-checkout-api-482/context
+```
+
+The context builder assembles pull request, graph neighborhood, evidence, signal, assumption, and sectioned context without invoking GPT.
 Reasoning execution logic remains reserved for later milestones.

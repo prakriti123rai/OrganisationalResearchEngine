@@ -7,6 +7,11 @@ from app.schemas.graph import GraphEdgeRead, GraphNodeRead, GraphSyncRead, Organ
 from app.schemas.organization import OrganizationCreate, OrganizationRead
 from app.schemas.organizational_signal import OrganizationalSignalCreate, OrganizationalSignalRead
 from app.schemas.pull_request import PullRequestCreate, PullRequestRead
+from app.schemas.reasoning_context import (
+    ReasoningContextRead,
+    ReasoningContextScope,
+    ReasoningContextSection,
+)
 from app.schemas.reasoning_session import ReasoningSessionCreate, ReasoningSessionRead
 from app.schemas.relationship import EntityRelationshipCreate, EntityRelationshipRead
 from app.schemas.repository import RepositoryCreate, RepositoryRead
@@ -37,6 +42,9 @@ __all__ = [
     "PullRequestRead",
     "ReasoningSessionCreate",
     "ReasoningSessionRead",
+    "ReasoningContextRead",
+    "ReasoningContextScope",
+    "ReasoningContextSection",
     "RepositoryCreate",
     "RepositoryRead",
     "UserCreate",
