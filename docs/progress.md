@@ -40,7 +40,7 @@ Current Branch: main
 | 4 | Evidence Service | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - 4b9d84cff85dd923e7f64470940c3afe5361fb16 | Implemented evidence service logic, evidence HTTP API, canonical evidence filtering, linked evidence creation, and API documentation. |
 | 5 | Organizational Graph | Complete | 4 | 6 | No | 2026-07-17 | Recorded after audit fix commit creation - a91bf7768135bb98fd672d6a7cfc449dbde253c3 | Implemented graph read API, graph schemas, canonical graph service, Neo4j graph sync, graph validation, frontend dashboard, evidence explorer, graph view, and API documentation. |
 | 6 | Reasoning Context Builder | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - 5acf9c236e92239fe35cfc1a1a688a05fa784fb0 | Implemented deterministic reasoning context schemas, service, session context API, pull request context API, graph/evidence/signal/assumption context assembly, validation, and documentation. |
-| 7 | GPT-5.5 Reasoning Engine | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - 53983392d9b651dde1a30e0274e89e63e300338d | Implemented GPT-5.5 reasoning engine API, structured reasoning result schema, persisted session reports, deterministic local fallback when `OPENAI_API_KEY` is absent, OpenAI Responses-compatible provider path, seed preservation for completed reasoning sessions, and API documentation. |
+| 7 | GPT-5.5 Reasoning Engine | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - pending | Implemented GPT-5.5 reasoning engine API, canonical `POST /reason` API, structured reasoning result schema, persisted session reports with prompt version and execution time, deterministic local fallback when `OPENAI_API_KEY` is absent, OpenAI Responses-compatible provider path, seed preservation for completed reasoning sessions, and API documentation. |
 | 8 | Reasoning Timeline | Not Started | 5 |  |  |  |  |  |
 | 9 | Impact Report | Not Started | 3 |  |  |  |  |  |
 | 10 | Suggested Actions | Not Started | 4 |  |  |  |  |  |
@@ -271,7 +271,10 @@ Milestone 7 completed.
 Created structured reasoning schemas for run requests, findings, reasoning steps, and persisted results.
 Created a reasoning engine service that builds canonical Milestone 6 context, executes the configured `gpt-5.5` reasoning path, persists the result on the reasoning session, and returns stable response contracts.
 Created HTTP routes for `POST /organizations/{organization_id}/reasoning-sessions/{reasoning_session_id}/run` and `GET /organizations/{organization_id}/reasoning-sessions/{reasoning_session_id}/result`.
+Created canonical HTTP route for `POST /reason` with reasoning context input and reasoning report output.
+Created prompt builder, GPT adapter, reasoning parser, structured reasoning report builder, and canonical prompt files.
 Added optional OpenAI Responses-compatible execution through `OPENAI_API_KEY`, while preserving runnable local development with a deterministic contract-compatible reasoning path when no key is configured.
+Persisted prompt version and execution time metadata with completed reasoning reports.
 Preserved completed reasoning session results across Docker backend restarts and idempotent demo seed execution.
 Documented Reasoning Engine API usage and configuration in README.md and `.env.example`.
 Verified backend compile with `python -m compileall`.
@@ -282,6 +285,8 @@ Verified containerized backend `/health` response with PostgreSQL and Neo4j reac
 Verified frontend HTTP 200 response.
 Verified reasoning context remains available for seeded session `reasoning-demo-pr-482`.
 Verified reasoning run returns completed session status, `reasoning_result_v1`, `model=gpt-5.5`, `provider=deterministic_local`, `impact_level=high`, 4 findings, and 5 reasoning steps.
+Verified reasoning run returns split hypotheses, canonical report sections, recommended actions, prompt version, execution time, and preserved evidence IDs.
+Verified `POST /reason` returns a structured reasoning report from a canonical reasoning context payload.
 Verified persisted reasoning result read endpoint returns HTTP 200 after execution.
 Verified repeated run without `force` returns the persisted completed result without changing completion time.
 Verified invalid reasoning run depth returns HTTP 422.

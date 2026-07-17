@@ -34,6 +34,23 @@ class ReasoningStep(OrmSchema):
     assumption_ids: list[str] = Field(default_factory=list)
 
 
+class ReasoningHypothesis(OrmSchema):
+    id: str
+    statement: str
+    status: str
+    confidence: str
+    evidence_ids: list[str] = Field(default_factory=list)
+    assumption_ids: list[str] = Field(default_factory=list)
+
+
+class ReasoningReportSection(OrmSchema):
+    key: str
+    title: str
+    summary: str
+    evidence_ids: list[str] = Field(default_factory=list)
+    assumption_ids: list[str] = Field(default_factory=list)
+
+
 class ReasoningResult(OrmSchema):
     schema_version: str = "reasoning_result_v1"
     question: str
@@ -43,8 +60,11 @@ class ReasoningResult(OrmSchema):
     impact_level: str
     confidence: str
     findings: list[ReasoningFinding] = Field(default_factory=list)
+    hypotheses: list[ReasoningHypothesis] = Field(default_factory=list)
+    canonical_sections: list[ReasoningReportSection] = Field(default_factory=list)
     reasoning_steps: list[ReasoningStep] = Field(default_factory=list)
     open_questions: list[str] = Field(default_factory=list)
+    recommended_actions: list[str] = Field(default_factory=list)
     impacted_entity_ids: list[str] = Field(default_factory=list)
     primary_evidence_ids: list[str] = Field(default_factory=list)
     context_scope: Metadata = Field(default_factory=dict)

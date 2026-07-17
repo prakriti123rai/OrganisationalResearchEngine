@@ -258,7 +258,7 @@ export default function Home() {
       <section className="flex min-w-0 flex-1 flex-col px-8 py-7">
         <header className="flex items-start justify-between gap-6 border-b border-border pb-6">
           <div>
-            <div className="text-sm text-muted-foreground">Milestone 5</div>
+            <div className="text-sm text-muted-foreground">Milestone 7</div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
               {activeView === "evidence" && "Evidence Explorer"}

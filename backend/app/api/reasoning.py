@@ -4,15 +4,31 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db
-from app.schemas.reasoning import ReasoningRunRead, ReasoningRunRequest
+from app.schemas.reasoning import ReasoningResult, ReasoningRunRead, ReasoningRunRequest
+from app.schemas.reasoning_context import ReasoningContextRead
 from app.services.exceptions import NotFoundError, ValidationError
 from app.services.reasoning_engine import ReasoningEngineService, ReasoningExecutionError
 
-router = APIRouter(prefix="/organizations/{organization_id}/reasoning-sessions", tags=["reasoning"])
+router = APIRouter(tags=["reasoning"])
 DatabaseSession = Annotated[Session, Depends(get_db)]
 
 
-@router.post("/{reasoning_session_id}/run", response_model=ReasoningRunRead)
+@router.post("/reason", response_model=ReasoningResult)
+def reason_from_context(
+    payload: ReasoningContextRead,
+    db: DatabaseSession,
+) -> ReasoningResult:
+    service = ReasoningEngineService(db)
+    try:
+        return service.reason_context(context=payload)
+    except ReasoningExecutionError as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
+
+
+@router.post(
+    "/organizations/{organization_id}/reasoning-sessions/{reasoning_session_id}/run",
+    response_model=ReasoningRunRead,
+)
 def run_reasoning_session(
     organization_id: str,
     reasoning_session_id: str,
@@ -38,7 +54,10 @@ def run_reasoning_session(
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
 
 
-@router.get("/{reasoning_session_id}/result", response_model=ReasoningRunRead)
+@router.get(
+    "/organizations/{organization_id}/reasoning-sessions/{reasoning_session_id}/result",
+    response_model=ReasoningRunRead,
+)
 def get_reasoning_session_result(
     organization_id: str,
     reasoning_session_id: str,

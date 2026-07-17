@@ -78,4 +78,5 @@ curl http://localhost:8000/organizations/org-demo-apex/reasoning-sessions/reason
 ```
 
 The engine builds canonical context, executes the configured `gpt-5.5` reasoning model when `OPENAI_API_KEY` is present, persists the structured result on the reasoning session, and returns the same result through the read endpoint.
+The canonical context-to-report API is available at `POST /reason` for callers that already have a reasoning context payload.
 When `OPENAI_API_KEY` is not configured, local development uses a deterministic contract-compatible reasoning path so the application remains runnable.
