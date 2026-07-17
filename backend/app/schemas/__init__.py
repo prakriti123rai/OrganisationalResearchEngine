@@ -15,6 +15,9 @@ from app.schemas.reasoning import (
     ReasoningRunRead,
     ReasoningRunRequest,
     ReasoningStep,
+    ReasoningTraceArtifact,
+    ReasoningTraceRead,
+    ReasoningTraceStage,
 )
 from app.schemas.reasoning_context import (
     ReasoningContextRead,
@@ -58,6 +61,9 @@ __all__ = [
     "ReasoningSessionCreate",
     "ReasoningSessionRead",
     "ReasoningStep",
+    "ReasoningTraceArtifact",
+    "ReasoningTraceRead",
+    "ReasoningTraceStage",
     "ReasoningContextRead",
     "ReasoningContextScope",
     "ReasoningContextSection",

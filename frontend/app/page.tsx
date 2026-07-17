@@ -12,6 +12,7 @@ import {
 } from "@xyflow/react";
 import {
   BarChart3,
+  Brain,
   CircleAlert,
   Database,
   FileText,
@@ -22,7 +23,9 @@ import {
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 
-type View = "dashboard" | "evidence" | "graph";
+import { Timeline, type TraceStage } from "../components/reasoning/Timeline";
+
+type View = "dashboard" | "evidence" | "graph" | "reasoning";
 
 type EvidenceRecord = {
   id: string;
@@ -69,13 +72,50 @@ type OrganizationalGraph = {
   edge_count: number;
 };
 
+type ReasoningResult = {
+  schema_version: string;
+  answer: string;
+  model: string;
+  provider: string;
+  impact_level: string;
+  confidence: string;
+  findings: {
+    id: string;
+    title: string;
+    summary: string;
+    impact: string;
+    confidence: string;
+    evidence_ids: string[];
+  }[];
+  hypotheses: {
+    id: string;
+    statement: string;
+    status: string;
+    confidence: string;
+    evidence_ids: string[];
+    assumption_ids: string[];
+  }[];
+  recommended_actions: string[];
+  primary_evidence_ids: string[];
+  metadata: Record<string, string | number | boolean | null>;
+};
+
+type ReasoningTrace = {
+  organization_id: string;
+  stages: TraceStage[];
+  result: ReasoningResult;
+  metadata: Record<string, string | number | boolean | null>;
+};
+
 const organizationId = "org-demo-apex";
+const reasoningSessionId = "reasoning-demo-pr-482";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const navigation = [
   { id: "dashboard" as const, name: "Dashboard", icon: BarChart3 },
   { id: "evidence" as const, name: "Evidence", icon: FileText },
   { id: "graph" as const, name: "Graph", icon: Network },
+  { id: "reasoning" as const, name: "Reasoning", icon: Brain },
 ];
 
 const nodeTypeOrder = [
@@ -156,6 +196,9 @@ export default function Home() {
   const [activeView, setActiveView] = useState<View>("dashboard");
   const [evidence, setEvidence] = useState<EvidenceRecord[]>([]);
   const [graph, setGraph] = useState<OrganizationalGraph | null>(null);
+  const [reasoningTrace, setReasoningTrace] = useState<ReasoningTrace | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -170,11 +213,25 @@ export default function Home() {
       await fetchJson(`/organizations/${organizationId}/graph/sync`, {
         method: "POST",
       });
+      await fetchJson(
+        `/organizations/${organizationId}/reasoning-sessions/${reasoningSessionId}/run`,
+        {
+          method: "POST",
+          body: JSON.stringify({ graph_depth: 2 }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
       const graphResult = await fetchJson<OrganizationalGraph>(
         `/organizations/${organizationId}/graph/neo4j`,
       );
+      const traceResult = await fetchJson<ReasoningTrace>(
+        `/reason/${reasoningSessionId}?organization_id=${organizationId}&graph_depth=2`,
+      );
       setEvidence(evidenceResult);
       setGraph(graphResult);
+      setReasoningTrace(traceResult);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -258,15 +315,17 @@ export default function Home() {
       <section className="flex min-w-0 flex-1 flex-col px-8 py-7">
         <header className="flex items-start justify-between gap-6 border-b border-border pb-6">
           <div>
-            <div className="text-sm text-muted-foreground">Milestone 7</div>
+            <div className="text-sm text-muted-foreground">Milestone 8</div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
               {activeView === "evidence" && "Evidence Explorer"}
               {activeView === "graph" && "Organizational Graph"}
+              {activeView === "reasoning" && "Reasoning Workspace"}
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-              Live demo data from the seeded organization, evidence service, and
-              Neo4j-backed organizational graph.
+              {activeView === "reasoning"
+                ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
+                : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
             </p>
           </div>
           <button
@@ -288,7 +347,8 @@ export default function Home() {
 
         {loading ? (
           <div className="grid flex-1 place-items-center text-sm text-muted-foreground">
-            Loading live organization data...
+            Collecting evidence, expanding relationships, and activating
+            signals...
           </div>
         ) : (
           <div className="min-h-0 flex-1 py-6">
@@ -305,10 +365,134 @@ export default function Home() {
                 onSync={() => void syncGraph()}
               />
             )}
+            {activeView === "reasoning" && (
+              <ReasoningWorkspace evidence={evidence} trace={reasoningTrace} />
+            )}
           </div>
         )}
       </section>
     </main>
+  );
+}
+
+function ReasoningWorkspace({
+  evidence,
+  trace,
+}: {
+  evidence: EvidenceRecord[];
+  trace: ReasoningTrace | null;
+}) {
+  const [activeEvidenceId, setActiveEvidenceId] = useState<string | null>(null);
+  const activeEvidence =
+    evidence.find((item) => item.id === activeEvidenceId) ??
+    evidence[0] ??
+    null;
+
+  if (!trace) {
+    return (
+      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+        Collecting evidence, expanding graph, and preparing reasoning trace...
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_360px] gap-5">
+      <section className="min-h-0 border border-border bg-background p-5">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold">
+              Pre-Merge Organizational Reasoning
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {trace.result.answer}
+            </p>
+          </div>
+          <div className="shrink-0 border border-confidence/40 bg-confidence/10 px-3 py-2 text-right">
+            <div className="text-xs text-muted-foreground">Confidence</div>
+            <div className="mt-1 text-sm font-semibold text-confidence">
+              {trace.result.confidence}
+            </div>
+          </div>
+        </div>
+        <Timeline
+          activeEvidenceId={activeEvidenceId}
+          onSelectEvidence={setActiveEvidenceId}
+          stages={trace.stages}
+        />
+      </section>
+
+      <aside className="min-h-0 overflow-y-auto border border-border bg-muted p-4">
+        <div className="grid grid-cols-2 gap-3">
+          <TraceMetric label="Stages" value={trace.stages.length} />
+          <TraceMetric label="Findings" value={trace.result.findings.length} />
+          <TraceMetric
+            label="Hypotheses"
+            value={trace.result.hypotheses.length}
+          />
+          <TraceMetric
+            label="Actions"
+            value={trace.result.recommended_actions.length}
+          />
+        </div>
+
+        <section className="mt-5 border border-border bg-background p-4">
+          <h2 className="text-sm font-semibold">Predicted Impact</h2>
+          <div className="mt-3 space-y-3">
+            {trace.result.findings.map((finding) => (
+              <article
+                className="border border-border bg-muted p-3"
+                key={finding.id}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="text-sm font-semibold">{finding.title}</div>
+                  <span className="text-xs text-risk">{finding.impact}</span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  {finding.summary}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-5 border border-border bg-background p-4">
+          <h2 className="text-sm font-semibold">Selected Evidence</h2>
+          {activeEvidence ? (
+            <article className="mt-3">
+              <div className="text-sm font-semibold">
+                {activeEvidence.title}
+              </div>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                {activeEvidence.summary}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                <Pill>{activeEvidence.source}</Pill>
+                <Pill>{titleCase(activeEvidence.evidence_type)}</Pill>
+              </div>
+            </article>
+          ) : (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Select an evidence chip in the timeline.
+            </p>
+          )}
+        </section>
+
+        <section className="mt-5 border border-border bg-background p-4">
+          <h2 className="text-sm font-semibold">Planned Actions</h2>
+          <div className="mt-3 space-y-2">
+            {trace.result.recommended_actions.map((action) => (
+              <div
+                className="border border-border bg-muted px-3 py-2 text-xs leading-5 text-muted-foreground"
+                key={action}
+              >
+                {action}
+              </div>
+            ))}
+          </div>
+        </section>
+      </aside>
+    </div>
   );
 }
 
@@ -684,6 +868,15 @@ function buildFlowGraph(graph: OrganizationalGraph | null): {
   }));
 
   return { nodes, edges };
+}
+
+function TraceMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="border border-border bg-background p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 text-xl font-semibold">{value}</div>
+    </div>
+  );
 }
 
 function Metric({

@@ -76,3 +76,34 @@ class ReasoningRunRead(OrmSchema):
     reasoning_session: ReasoningSessionRead
     result: ReasoningResult
     context_metadata: Metadata = Field(default_factory=dict)
+
+
+class ReasoningTraceArtifact(OrmSchema):
+    id: str
+    title: str
+    summary: str
+    artifact_type: str
+    status: str = "complete"
+    confidence: str | None = None
+    evidence_ids: list[str] = Field(default_factory=list)
+    relationship_ids: list[str] = Field(default_factory=list)
+    signal_ids: list[str] = Field(default_factory=list)
+    assumption_ids: list[str] = Field(default_factory=list)
+    hypothesis_ids: list[str] = Field(default_factory=list)
+
+
+class ReasoningTraceStage(OrmSchema):
+    id: str
+    order: int
+    title: str
+    summary: str
+    status: str = "complete"
+    artifacts: list[ReasoningTraceArtifact] = Field(default_factory=list)
+
+
+class ReasoningTraceRead(OrmSchema):
+    organization_id: str
+    reasoning_session: ReasoningSessionRead
+    stages: list[ReasoningTraceStage] = Field(default_factory=list)
+    result: ReasoningResult
+    metadata: Metadata = Field(default_factory=dict)

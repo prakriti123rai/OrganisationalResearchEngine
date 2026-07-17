@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 50%
-Current Milestone: Milestone 7 - GPT-5.5 Reasoning Engine complete
-Next Milestone: Milestone 8 - Reasoning Timeline
-Demo Readiness: 60%
+Overall Completion: 57%
+Current Milestone: Milestone 8 - Reasoning Timeline complete
+Next Milestone: Milestone 9 - Impact Report
+Demo Readiness: 70%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 7 |
-| Remaining | 7 |
+| Completed | 8 |
+| Remaining | 6 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 33 |
+| Actual Hours | 38 |
 | Blocked | No |
 
 ---
@@ -41,7 +41,7 @@ Current Branch: main
 | 5 | Organizational Graph | Complete | 4 | 6 | No | 2026-07-17 | Recorded after audit fix commit creation - a91bf7768135bb98fd672d6a7cfc449dbde253c3 | Implemented graph read API, graph schemas, canonical graph service, Neo4j graph sync, graph validation, frontend dashboard, evidence explorer, graph view, and API documentation. |
 | 6 | Reasoning Context Builder | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - 5acf9c236e92239fe35cfc1a1a688a05fa784fb0 | Implemented deterministic reasoning context schemas, service, session context API, pull request context API, graph/evidence/signal/assumption context assembly, validation, and documentation. |
 | 7 | GPT-5.5 Reasoning Engine | Complete | 5 | 5 | No | 2026-07-17 | Recorded after commit creation - c51ada73322d6c4ddb304fe1aeffb32ddbfbcc06 | Implemented GPT-5.5 reasoning engine API, canonical `POST /reason` API, structured reasoning result schema, persisted session reports with prompt version and execution time, deterministic local fallback when `OPENAI_API_KEY` is absent, OpenAI Responses-compatible provider path, seed preservation for completed reasoning sessions, and API documentation. |
-| 8 | Reasoning Timeline | Not Started | 5 |  |  |  |  |  |
+| 8 | Reasoning Timeline | Complete | 5 | 5 | No | 2026-07-17 | Pending commit hash | Implemented the inspectable reasoning timeline experience, trace API, progressive stage reveal, artifact cards, clickable evidence inspection, and reasoning workspace UI. |
 | 9 | Impact Report | Not Started | 3 |  |  |  |  |  |
 | 10 | Suggested Actions | Not Started | 4 |  |  |  |  |  |
 | 11 | Execution Center | Not Started | 4 |  |  |  |  |  |
@@ -57,6 +57,7 @@ Overall Completion % = Completed Milestones / 14 x 100.
 Milestone 1 complete = 7%.
 Milestone 2 complete = 14%.
 Milestone 7 complete = 50%.
+Milestone 8 complete = 57%.
 Milestone 14 complete = 100%.
 
 ---
@@ -293,3 +294,24 @@ Verified invalid reasoning run depth returns HTTP 422.
 Verified missing reasoning session run returns HTTP 404.
 Verified completed reasoning result survives backend restart and demo seed execution.
 Verified recent backend logs contained no runtime errors.
+
+Milestone 8 started.
+Reviewed the provided Design Freeze PDF, the implementation milestones PDF containing the Final Implementation Specification, CODEX instructions, and progress log before implementation.
+Determined Milestone 8 - Reasoning Timeline was the next incomplete milestone.
+
+Milestone 8 completed.
+Created `GET /reason/{sessionId}` for an ephemeral, derived reasoning trace while preserving the existing `POST /reason` and reasoning-session run APIs.
+Built the trace from the completed reasoning session, bounded context, evidence, graph relationships, signals, assumptions, hypotheses, conflicts, predictions, and planned actions.
+Implemented the required timeline components for evidence, signal, hypothesis, conflict, prediction, and timeline rendering.
+Added the Reasoning Workspace navigation view with progressive timeline reveal, smooth transition animation, scrollable stage list, clickable evidence chips, evidence inspection, confidence summary, impact cards, and planned actions.
+Verified the frozen stage sequence: Collecting Evidence, Expanding Graph, Activating Signals, Retrieving Assumptions, Generating Hypotheses, Validating, Resolving Conflicts, Predicting Impacts, and Planning Actions.
+Verified no user-facing `Loading...` copy remains in the Milestone 8 experience.
+Verified the browser-rendered timeline progressively reveals all stages.
+Verified browser evidence chip clicks and timeline scroll metrics.
+Verified backend compile, Ruff linting, and Black formatting.
+Verified frontend ESLint, Prettier formatting, and production build.
+Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified the reasoning-session run endpoint and `GET /reason/{sessionId}` trace endpoint return the expected seeded demo trace.
+Verified frontend HTTP 200 response.
+Verified Docker Compose services are running with PostgreSQL, Neo4j, backend, and frontend healthy or up.
+Verified recent Docker logs contained no runtime errors.

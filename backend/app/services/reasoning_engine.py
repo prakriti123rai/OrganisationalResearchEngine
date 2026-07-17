@@ -10,7 +10,13 @@ from app.config import get_settings
 from app.models.reasoning_session import ReasoningSession
 from app.reasoning.prompt_builder import REASONING_PROMPT_VERSION, build_prompt_payload
 from app.reasoning.reasoning_report import build_deterministic_reasoning_report
-from app.schemas.reasoning import ReasoningResult, ReasoningRunRead
+from app.schemas.reasoning import (
+    ReasoningResult,
+    ReasoningRunRead,
+    ReasoningTraceArtifact,
+    ReasoningTraceRead,
+    ReasoningTraceStage,
+)
 from app.schemas.reasoning_context import ReasoningContextRead
 from app.schemas.reasoning_session import ReasoningSessionRead
 from app.services.exceptions import NotFoundError, ValidationError
@@ -97,6 +103,36 @@ class ReasoningEngineService:
             raise ValidationError(f"Reasoning session '{reasoning_session_id}' has no result yet.")
         return self._to_run_read(organization_id, session, session.report)
 
+    def get_trace(
+        self,
+        *,
+        organization_id: str,
+        reasoning_session_id: str,
+        graph_depth: int = 2,
+    ) -> ReasoningTraceRead:
+        session = self._get_reasoning_session(organization_id, reasoning_session_id)
+        if session.report is None:
+            raise ValidationError(f"Reasoning session '{reasoning_session_id}' has no result yet.")
+
+        context = ReasoningContextService(self.db).build_for_session(
+            organization_id=organization_id,
+            reasoning_session_id=reasoning_session_id,
+            graph_depth=graph_depth,
+        )
+        result = ReasoningResult.model_validate(session.report)
+        return ReasoningTraceRead(
+            organization_id=organization_id,
+            reasoning_session=ReasoningSessionRead.model_validate(session),
+            stages=self._trace_stages(context=context, result=result),
+            result=result,
+            metadata={
+                "source": "derived_reasoning_trace",
+                "ephemeral": True,
+                "graph_depth": graph_depth,
+                "stage_count": 9,
+            },
+        )
+
     def reason_context(
         self,
         *,
@@ -164,3 +200,182 @@ class ReasoningEngineService:
 
     def _now_iso(self) -> str:
         return datetime.now(timezone.utc).isoformat()
+
+    def _trace_stages(
+        self,
+        *,
+        context: ReasoningContextRead,
+        result: ReasoningResult,
+    ) -> list[ReasoningTraceStage]:
+        evidence_artifacts = [
+            ReasoningTraceArtifact(
+                id=evidence.id,
+                title=evidence.title,
+                summary=evidence.summary,
+                artifact_type="evidence",
+                evidence_ids=[evidence.id],
+            )
+            for evidence in context.evidence
+        ]
+        relationship_artifacts = [
+            ReasoningTraceArtifact(
+                id=edge.id,
+                title=edge.relationship_type,
+                summary=f"{edge.source_entity_id} to {edge.target_entity_id}",
+                artifact_type="relationship",
+                evidence_ids=edge.supporting_evidence_ids,
+                relationship_ids=[edge.id],
+                signal_ids=edge.supporting_signal_ids,
+            )
+            for edge in context.edges
+        ]
+        signal_artifacts = [
+            ReasoningTraceArtifact(
+                id=signal.id,
+                title=signal.signal_type,
+                summary=signal.summary,
+                artifact_type="signal",
+                confidence=signal.confidence,
+                signal_ids=[signal.id],
+            )
+            for signal in context.signals
+        ]
+        assumption_artifacts = [
+            ReasoningTraceArtifact(
+                id=assumption.id,
+                title=assumption.assumption_type,
+                summary=assumption.statement,
+                artifact_type="assumption",
+                confidence=assumption.confidence,
+                assumption_ids=[assumption.id],
+            )
+            for assumption in context.assumptions
+        ]
+        hypothesis_artifacts = [
+            ReasoningTraceArtifact(
+                id=hypothesis.id,
+                title=hypothesis.status,
+                summary=hypothesis.statement,
+                artifact_type="hypothesis",
+                confidence=hypothesis.confidence,
+                evidence_ids=hypothesis.evidence_ids,
+                assumption_ids=hypothesis.assumption_ids,
+                hypothesis_ids=[hypothesis.id],
+            )
+            for hypothesis in result.hypotheses
+        ]
+        conflict_section = self._section(result, "conflicts")
+        impact_section = self._section(result, "predicted_impacts")
+        action_section = self._section(result, "recommended_actions")
+
+        return [
+            ReasoningTraceStage(
+                id="collecting-evidence",
+                order=1,
+                title="Collecting Evidence",
+                summary=f"{len(context.evidence)} evidence records selected for analysis.",
+                artifacts=evidence_artifacts,
+            ),
+            ReasoningTraceStage(
+                id="expanding-graph",
+                order=2,
+                title="Expanding Graph",
+                summary=(
+                    f"{len(context.nodes)} entities and {len(context.edges)} "
+                    "relationships explored."
+                ),
+                artifacts=relationship_artifacts,
+            ),
+            ReasoningTraceStage(
+                id="activating-signals",
+                order=3,
+                title="Activating Signals",
+                summary=f"{len(context.signals)} organizational signals activated.",
+                artifacts=signal_artifacts,
+            ),
+            ReasoningTraceStage(
+                id="retrieving-assumptions",
+                order=4,
+                title="Retrieving Assumptions",
+                summary=f"{len(context.assumptions)} persistent assumptions retrieved.",
+                artifacts=assumption_artifacts,
+            ),
+            ReasoningTraceStage(
+                id="generating-hypotheses",
+                order=5,
+                title="Generating Hypotheses",
+                summary=f"{len(result.hypotheses)} candidate hypotheses generated.",
+                artifacts=hypothesis_artifacts,
+            ),
+            ReasoningTraceStage(
+                id="validating",
+                order=6,
+                title="Validating",
+                summary=(
+                    "Hypotheses validated against evidence, relationships, signals, "
+                    "and assumptions."
+                ),
+                artifacts=hypothesis_artifacts,
+            ),
+            ReasoningTraceStage(
+                id="resolving-conflicts",
+                order=7,
+                title="Resolving Conflicts",
+                summary=conflict_section.summary if conflict_section else "No conflicts detected.",
+                artifacts=[
+                    ReasoningTraceArtifact(
+                        id="conflict-summary",
+                        title="Conflict Summary",
+                        summary=(
+                            conflict_section.summary
+                            if conflict_section
+                            else "No conflicts detected."
+                        ),
+                        artifact_type="conflict",
+                    )
+                ],
+            ),
+            ReasoningTraceStage(
+                id="predicting-impacts",
+                order=8,
+                title="Predicting Impacts",
+                summary=impact_section.summary if impact_section else result.answer,
+                artifacts=[
+                    ReasoningTraceArtifact(
+                        id=finding.id,
+                        title=finding.title,
+                        summary=finding.summary,
+                        artifact_type="prediction",
+                        confidence=finding.confidence,
+                        evidence_ids=finding.evidence_ids,
+                        signal_ids=finding.signal_ids,
+                        assumption_ids=finding.assumption_ids,
+                    )
+                    for finding in result.findings
+                ],
+            ),
+            ReasoningTraceStage(
+                id="planning-actions",
+                order=9,
+                title="Planning Actions",
+                summary=(
+                    action_section.summary
+                    if action_section
+                    else f"{len(result.recommended_actions)} actions planned."
+                ),
+                artifacts=[
+                    ReasoningTraceArtifact(
+                        id=f"action-{index}",
+                        title="Recommended action",
+                        summary=action,
+                        artifact_type="action",
+                        confidence=result.confidence,
+                        evidence_ids=result.primary_evidence_ids,
+                    )
+                    for index, action in enumerate(result.recommended_actions, start=1)
+                ],
+            ),
+        ]
+
+    def _section(self, result: ReasoningResult, key: str):
+        return next((section for section in result.canonical_sections if section.key == key), None)
