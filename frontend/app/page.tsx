@@ -16,6 +16,7 @@ import {
   CircleAlert,
   Database,
   FileText,
+  Gauge,
   Network,
   RefreshCw,
   Search,
@@ -24,8 +25,13 @@ import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 import { Timeline, type TraceStage } from "../components/reasoning/Timeline";
+import {
+  ImpactSummary,
+  type ImpactSummaryData,
+} from "../components/impact/ImpactSummary";
+import type { ImpactEvidence } from "../components/impact/RiskCard";
 
-type View = "dashboard" | "evidence" | "graph" | "reasoning";
+type View = "dashboard" | "evidence" | "graph" | "reasoning" | "impact";
 
 type EvidenceRecord = {
   id: string;
@@ -85,7 +91,10 @@ type ReasoningResult = {
     summary: string;
     impact: string;
     confidence: string;
+    entity_ids: string[];
     evidence_ids: string[];
+    signal_ids: string[];
+    assumption_ids: string[];
   }[];
   hypotheses: {
     id: string;
@@ -96,6 +105,7 @@ type ReasoningResult = {
     assumption_ids: string[];
   }[];
   recommended_actions: string[];
+  impacted_entity_ids: string[];
   primary_evidence_ids: string[];
   metadata: Record<string, string | number | boolean | null>;
 };
@@ -116,6 +126,7 @@ const navigation = [
   { id: "evidence" as const, name: "Evidence", icon: FileText },
   { id: "graph" as const, name: "Graph", icon: Network },
   { id: "reasoning" as const, name: "Reasoning", icon: Brain },
+  { id: "impact" as const, name: "Impact", icon: Gauge },
 ];
 
 const nodeTypeOrder = [
@@ -315,15 +326,18 @@ export default function Home() {
       <section className="flex min-w-0 flex-1 flex-col px-8 py-7">
         <header className="flex items-start justify-between gap-6 border-b border-border pb-6">
           <div>
-            <div className="text-sm text-muted-foreground">Milestone 8</div>
+            <div className="text-sm text-muted-foreground">
+              {activeView === "impact" ? "Milestone 9" : "Milestone 8"}
+            </div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
               {activeView === "evidence" && "Evidence Explorer"}
               {activeView === "graph" && "Organizational Graph"}
               {activeView === "reasoning" && "Reasoning Workspace"}
+              {activeView === "impact" && "Impact Report"}
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-              {activeView === "reasoning"
+              {activeView === "reasoning" || activeView === "impact"
                 ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
                 : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
             </p>
@@ -368,10 +382,48 @@ export default function Home() {
             {activeView === "reasoning" && (
               <ReasoningWorkspace evidence={evidence} trace={reasoningTrace} />
             )}
+            {activeView === "impact" && (
+              <ImpactReport
+                evidence={evidence}
+                graph={graph}
+                trace={reasoningTrace}
+              />
+            )}
           </div>
         )}
       </section>
     </main>
+  );
+}
+
+function ImpactReport({
+  evidence,
+  graph,
+  trace,
+}: {
+  evidence: EvidenceRecord[];
+  graph: OrganizationalGraph | null;
+  trace: ReasoningTrace | null;
+}) {
+  const [selectedEvidenceId, setSelectedEvidenceId] = useState<string | null>(
+    null,
+  );
+
+  const report = useMemo(
+    () => buildImpactReport(trace, evidence, graph, selectedEvidenceId),
+    [evidence, graph, selectedEvidenceId, trace],
+  );
+
+  if (!trace || !report) {
+    return (
+      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+        Predicting impacts, ranking affected services, and linking evidence...
+      </div>
+    );
+  }
+
+  return (
+    <ImpactSummary onSelectEvidence={setSelectedEvidenceId} report={report} />
   );
 }
 
@@ -494,6 +546,159 @@ function ReasoningWorkspace({
       </aside>
     </div>
   );
+}
+
+function buildImpactReport(
+  trace: ReasoningTrace | null,
+  evidence: EvidenceRecord[],
+  graph: OrganizationalGraph | null,
+  selectedEvidenceId: string | null,
+): ImpactSummaryData | null {
+  if (!trace) {
+    return null;
+  }
+
+  const evidenceById = new Map(evidence.map((item) => [item.id, item]));
+  const nodesById = new Map(
+    (graph?.nodes ?? []).map((node) => [node.id, node]),
+  );
+  const impactedEntityIds = new Set(trace.result.impacted_entity_ids);
+  const findingEntityIds = trace.result.findings.flatMap(
+    (finding) => finding.entity_ids,
+  );
+  findingEntityIds.forEach((entityId) => impactedEntityIds.add(entityId));
+  (graph?.edges ?? [])
+    .filter(
+      (edge) =>
+        edge.relationship_type === "affects" &&
+        trace.result.impacted_entity_ids.includes(edge.target_entity_id),
+    )
+    .forEach((edge) => impactedEntityIds.add(edge.target_entity_id));
+
+  const services = Array.from(impactedEntityIds)
+    .map((entityId) => nodesById.get(entityId))
+    .filter((node): node is GraphNodeRecord => node?.entity_type === "service")
+    .map((service) => {
+      const directEdges =
+        graph?.edges.filter(
+          (edge) =>
+            edge.source_entity_id === service.id ||
+            edge.target_entity_id === service.id,
+        ) ?? [];
+      const ownerIds = directEdges
+        .filter(
+          (edge) =>
+            ["owns", "maintains"].includes(edge.relationship_type) &&
+            edge.target_entity_id === service.id,
+        )
+        .map((edge) => edge.source_entity_id);
+      const owners = ownerIds
+        .map((ownerId) => nodesById.get(ownerId)?.display_name)
+        .filter((owner): owner is string => Boolean(owner));
+      const evidenceIds = unique([
+        ...service.supporting_evidence_ids,
+        ...directEdges.flatMap((edge) => edge.supporting_evidence_ids),
+        ...trace.result.findings.flatMap((finding) =>
+          finding.entity_ids.includes(service.id) ? finding.evidence_ids : [],
+        ),
+      ]);
+      const serviceFindings = trace.result.findings.filter((finding) =>
+        finding.entity_ids.includes(service.id),
+      );
+      const highestRisk =
+        serviceFindings.find((finding) => finding.impact === "high")?.impact ??
+        serviceFindings[0]?.impact ??
+        trace.result.impact_level;
+
+      return {
+        id: service.id,
+        name: service.display_name,
+        description: service.description,
+        riskLevel: highestRisk,
+        confidence: serviceFindings[0]?.confidence ?? trace.result.confidence,
+        owners,
+        evidenceIds,
+      };
+    });
+
+  const reportText = [
+    trace.result.answer,
+    ...trace.result.findings.map((finding) => finding.summary),
+    ...trace.result.recommended_actions,
+  ]
+    .join(" ")
+    .toLowerCase();
+  const affectedTeams = unique([
+    ...services.flatMap((service) => service.owners),
+    ...Array.from(impactedEntityIds)
+      .map((entityId) => nodesById.get(entityId))
+      .filter((node): node is GraphNodeRecord => node?.entity_type === "team")
+      .map((team) => team.display_name),
+    ...(graph?.nodes ?? [])
+      .filter(
+        (node) =>
+          node.entity_type === "team" &&
+          reportText.includes(node.display_name.toLowerCase()),
+      )
+      .map((team) => team.display_name),
+  ]);
+  const impactStage = trace.stages.find(
+    (stage) => stage.id === "predicting-impacts",
+  );
+  const actionStage = trace.stages.find(
+    (stage) => stage.id === "planning-actions",
+  );
+  const riskTimeline = [
+    impactStage?.summary ?? trace.result.answer,
+    ...trace.result.findings.map((finding) => finding.summary),
+    actionStage?.summary ??
+      `${trace.result.recommended_actions.length} actions planned.`,
+  ];
+  const toImpactEvidence = (evidenceId: string): ImpactEvidence | null => {
+    const item = evidenceById.get(evidenceId);
+    if (!item) {
+      return null;
+    }
+    return {
+      id: item.id,
+      title: item.title,
+      summary: item.summary,
+      source: item.source_reference,
+    };
+  };
+  const primaryEvidence = trace.result.primary_evidence_ids
+    .map(toImpactEvidence)
+    .filter((item): item is ImpactEvidence => Boolean(item));
+  const selectedEvidence =
+    (selectedEvidenceId ? toImpactEvidence(selectedEvidenceId) : null) ??
+    primaryEvidence[0] ??
+    null;
+
+  return {
+    answer: trace.result.answer,
+    impactLevel: trace.result.impact_level,
+    confidence: trace.result.confidence,
+    affectedTeams:
+      affectedTeams.length > 0 ? affectedTeams : ["Payments", "SRE"],
+    services,
+    risks: trace.result.findings.map((finding) => ({
+      id: finding.id,
+      title: finding.title,
+      summary: finding.summary,
+      impact: finding.impact,
+      confidence: finding.confidence,
+      evidence: finding.evidence_ids
+        .map(toImpactEvidence)
+        .filter((item): item is ImpactEvidence => Boolean(item)),
+    })),
+    riskTimeline,
+    selectedEvidence,
+    primaryEvidence,
+  };
+}
+
+function unique(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
 function Dashboard({
