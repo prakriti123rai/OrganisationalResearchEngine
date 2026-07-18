@@ -22,3 +22,13 @@ class ExecutionHistoryCreate(OrmSchema):
 
 class ExecutionHistoryRead(ExecutionHistoryCreate):
     started_at: datetime
+
+
+class ExecutionStartRequest(OrmSchema):
+    organization_id: str = "org-demo-apex"
+    action_id: str
+
+
+class ExecutionHistoryList(OrmSchema):
+    organization_id: str
+    executions: list[ExecutionHistoryRead] = Field(default_factory=list)

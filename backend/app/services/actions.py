@@ -77,6 +77,13 @@ class ActionService:
         action.approved_at = datetime.now(timezone.utc)
         self.db.commit()
         self.db.refresh(action)
+        from app.execution.execution_service import ExecutionService
+
+        ExecutionService(self.db).start_execution(
+            organization_id=action.organization_id,
+            action_id=action.id,
+        )
+        self.db.refresh(action)
         return ActionRead.model_validate(action)
 
     def reject_action(self, *, action_id: str) -> ActionRead:
@@ -266,7 +273,7 @@ class ActionService:
                 "reasoning_session_id": reasoning_session.id,
                 "impact_level": result.impact_level,
                 "codex_ready": True,
-                "executes_now": False,
+                "executes_after_approval": True,
                 "requires_approval": True,
             },
         }

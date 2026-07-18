@@ -16,6 +16,7 @@ import {
   ClipboardCheck,
   CircleAlert,
   Database,
+  FileCode2,
   FileText,
   Gauge,
   Network,
@@ -30,6 +31,12 @@ import {
   type SuggestedAction,
 } from "../components/actions/ActionCard";
 import { ApprovalPanel } from "../components/actions/ApprovalPanel";
+import {
+  ArtifactViewer,
+  type ExecutionRecord,
+} from "../components/execution/ArtifactViewer";
+import { ExecutionPanel } from "../components/execution/ExecutionPanel";
+import { ExecutionTimeline } from "../components/execution/ExecutionTimeline";
 import { Timeline, type TraceStage } from "../components/reasoning/Timeline";
 import {
   ImpactSummary,
@@ -38,7 +45,13 @@ import {
 import type { ImpactEvidence } from "../components/impact/RiskCard";
 
 type View =
-  "dashboard" | "evidence" | "graph" | "reasoning" | "impact" | "actions";
+  | "dashboard"
+  | "evidence"
+  | "graph"
+  | "reasoning"
+  | "impact"
+  | "actions"
+  | "execution";
 
 type EvidenceRecord = {
   id: string;
@@ -130,6 +143,11 @@ type ActionPlan = {
   actions: SuggestedAction[];
 };
 
+type ExecutionHistory = {
+  organization_id: string;
+  executions: ExecutionRecord[];
+};
+
 const organizationId = "org-demo-apex";
 const reasoningSessionId = "reasoning-demo-pr-482";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -141,6 +159,7 @@ const navigation = [
   { id: "reasoning" as const, name: "Reasoning", icon: Brain },
   { id: "impact" as const, name: "Impact", icon: Gauge },
   { id: "actions" as const, name: "Actions", icon: ClipboardCheck },
+  { id: "execution" as const, name: "Execution", icon: FileCode2 },
 ];
 
 const nodeTypeOrder = [
@@ -225,6 +244,7 @@ export default function Home() {
     null,
   );
   const [actions, setActions] = useState<SuggestedAction[]>([]);
+  const [executions, setExecutions] = useState<ExecutionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [busyActionId, setBusyActionId] = useState<string | null>(null);
@@ -266,10 +286,14 @@ export default function Home() {
           "Content-Type": "application/json",
         },
       });
+      const executionHistory = await fetchJson<ExecutionHistory>(
+        `/execution/history?organization_id=${organizationId}`,
+      );
       setEvidence(evidenceResult);
       setGraph(graphResult);
       setReasoningTrace(traceResult);
       setActions(actionPlan.actions);
+      setExecutions(executionHistory.executions);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -305,6 +329,9 @@ export default function Home() {
       setActions((current) =>
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
+      if (decision === "approve") {
+        await refreshExecutions();
+      }
     } catch (actionError) {
       setError(
         actionError instanceof Error
@@ -352,6 +379,44 @@ export default function Home() {
     } finally {
       setBusyActionId(null);
     }
+  }
+
+  async function startExecution(action: SuggestedAction) {
+    setBusyActionId(action.id);
+    setError(null);
+    try {
+      await fetchJson<ExecutionRecord>("/execution/start", {
+        method: "POST",
+        body: JSON.stringify({
+          organization_id: organizationId,
+          action_id: action.id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      await refreshExecutions();
+      setActions((current) =>
+        current.map((item) =>
+          item.id === action.id ? { ...item, status: "executed" } : item,
+        ),
+      );
+    } catch (executionError) {
+      setError(
+        executionError instanceof Error
+          ? executionError.message
+          : "Unable to start execution.",
+      );
+    } finally {
+      setBusyActionId(null);
+    }
+  }
+
+  async function refreshExecutions() {
+    const executionHistory = await fetchJson<ExecutionHistory>(
+      `/execution/history?organization_id=${organizationId}`,
+    );
+    setExecutions(executionHistory.executions);
   }
 
   async function syncGraph() {
@@ -429,9 +494,11 @@ export default function Home() {
             <div className="text-sm text-muted-foreground">
               {activeView === "actions"
                 ? "Milestone 10"
-                : activeView === "impact"
-                  ? "Milestone 9"
-                  : "Milestone 8"}
+                : activeView === "execution"
+                  ? "Milestone 11"
+                  : activeView === "impact"
+                    ? "Milestone 9"
+                    : "Milestone 8"}
             </div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
@@ -440,13 +507,16 @@ export default function Home() {
               {activeView === "reasoning" && "Reasoning Workspace"}
               {activeView === "impact" && "Impact Report"}
               {activeView === "actions" && "Suggested Actions"}
+              {activeView === "execution" && "Execution Center"}
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-              {activeView === "actions"
-                ? "Generated engineering actions with human approval controls. Execution remains locked."
-                : activeView === "reasoning" || activeView === "impact"
-                  ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
-                  : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
+              {activeView === "execution"
+                ? "Approved actions converted into generated engineering artifacts with execution history."
+                : activeView === "actions"
+                  ? "Generated engineering actions with human approval controls before Codex execution."
+                  : activeView === "reasoning" || activeView === "impact"
+                    ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
+                    : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
             </p>
           </div>
           <button
@@ -505,10 +575,63 @@ export default function Home() {
                 onSave={saveAction}
               />
             )}
+            {activeView === "execution" && (
+              <ExecutionCenter
+                actions={actions}
+                busyActionId={busyActionId}
+                executions={executions}
+                onStartExecution={startExecution}
+              />
+            )}
           </div>
         )}
       </section>
     </main>
+  );
+}
+
+function ExecutionCenter({
+  actions,
+  busyActionId,
+  executions,
+  onStartExecution,
+}: {
+  actions: SuggestedAction[];
+  busyActionId: string | null;
+  executions: ExecutionRecord[];
+  onStartExecution: (action: SuggestedAction) => void;
+}) {
+  const [selectedExecutionId, setSelectedExecutionId] = useState<string | null>(
+    null,
+  );
+  const selectedExecution =
+    executions.find((execution) => execution.id === selectedExecutionId) ??
+    executions[0] ??
+    null;
+
+  if (actions.length === 0) {
+    return (
+      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+        Preparing approved actions for Codex artifact generation...
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_420px] gap-5">
+      <div className="min-h-0 space-y-5">
+        <ExecutionTimeline execution={selectedExecution} />
+        <ExecutionPanel
+          actions={actions}
+          busyActionId={busyActionId}
+          executions={executions}
+          onSelectExecution={setSelectedExecutionId}
+          onStartExecution={onStartExecution}
+          selectedExecutionId={selectedExecution?.id ?? null}
+        />
+      </div>
+      <ArtifactViewer execution={selectedExecution} />
+    </div>
   );
 }
 
@@ -563,8 +686,8 @@ function SuggestedActions({
               <h2 className="text-base font-semibold">Generated Actions</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 ORE converts the impact report into human-approved engineering
-                work items. Approved actions do not execute until the next
-                milestone.
+                work items. Approved actions flow into the Execution Center for
+                generated artifacts.
               </p>
             </div>
             <span className="shrink-0 border border-confidence/40 bg-confidence/10 px-3 py-2 text-xs text-confidence">

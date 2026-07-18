@@ -176,8 +176,8 @@ export function ApprovalPanel({
       </div>
 
       <div className="mt-4 border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
-        Nothing executes in this milestone. Approved actions become inputs for
-        the Execution Center later.
+        Approval starts safe Codex artifact generation. Production systems stay
+        untouched.
       </div>
     </aside>
   );

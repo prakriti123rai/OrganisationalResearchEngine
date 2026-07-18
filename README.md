@@ -91,3 +91,14 @@ curl -X POST http://localhost:8000/actions/action-reasoning-demo-pr-482-runbook-
 ```
 
 Actions are generated from the persisted reasoning result, stored in PostgreSQL, and require explicit approval before any later execution workflow can use them.
+Milestone 11 adds the execution center workflow:
+
+```bash
+curl -X POST http://localhost:8000/execution/start \
+  -H 'Content-Type: application/json' \
+  -d '{"organization_id":"org-demo-apex","action_id":"action-reasoning-demo-pr-482-documentation-update"}'
+curl http://localhost:8000/execution/history?organization_id=org-demo-apex
+curl http://localhost:8000/execution/execution-action-reasoning-demo-pr-482-documentation-update
+```
+
+Approval starts safe Codex artifact generation for approved actions, persists execution history, and records logs and artifact metadata without modifying production systems.
