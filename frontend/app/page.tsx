@@ -175,16 +175,6 @@ const reasoningLoadSteps = [
   "Preparing safe actions",
 ];
 
-const viewMilestoneLabels: Record<View, string> = {
-  dashboard: "Milestone 13 - Demo Polish",
-  evidence: "Milestone 13 - Demo Polish",
-  graph: "Milestone 13 - Demo Polish",
-  reasoning: "Milestone 13 - Demo Polish",
-  impact: "Milestone 13 - Demo Polish",
-  actions: "Milestone 13 - Demo Polish",
-  execution: "Milestone 13 - Demo Polish",
-};
-
 const nodeTypeOrder = [
   "organization",
   "team",
@@ -270,6 +260,7 @@ export default function Home() {
   const [executions, setExecutions] = useState<ExecutionRecord[]>([]);
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showReasoningProgress, setShowReasoningProgress] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [busyActionId, setBusyActionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -473,6 +464,22 @@ export default function Home() {
     void loadData();
   }, []);
 
+  useEffect(() => {
+    if (!showReasoningProgress) {
+      return;
+    }
+    const timeout = window.setTimeout(
+      () => setShowReasoningProgress(false),
+      2400,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [showReasoningProgress]);
+
+  function startPullRequestAnalysis() {
+    setActiveView("reasoning");
+    setShowReasoningProgress(true);
+  }
+
   return (
     <main className="flex min-h-screen flex-col bg-background text-foreground lg:flex-row">
       <aside className="flex w-full shrink-0 flex-col border-b border-border bg-muted px-4 py-4 lg:min-h-screen lg:w-64 lg:border-b-0 lg:border-r lg:py-5">
@@ -522,10 +529,7 @@ export default function Home() {
       <section className="flex min-w-0 flex-1 flex-col px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
         <header className="flex flex-col gap-5 border-b border-border pb-6 md:flex-row md:items-start md:justify-between">
           <div>
-            <div className="text-sm text-muted-foreground">
-              {viewMilestoneLabels[activeView]}
-            </div>
-            <h1 className="mt-2 text-2xl font-semibold">
+            <h1 className="text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
               {activeView === "evidence" && "Evidence Explorer"}
               {activeView === "graph" && "Organizational Graph"}
@@ -534,17 +538,6 @@ export default function Home() {
               {activeView === "actions" && "Suggested Actions"}
               {activeView === "execution" && "Execution Center"}
             </h1>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-              {activeView === "execution"
-                ? "Approved actions converted into generated engineering artifacts with execution history."
-                : activeView === "dashboard"
-                  ? "Organization health, recent reasoning, predictions, graph preview, and activity from the canonical APIs."
-                  : activeView === "actions"
-                    ? "Generated engineering actions with human approval controls before Codex execution."
-                    : activeView === "reasoning" || activeView === "impact"
-                      ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
-                      : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
-            </p>
           </div>
           <button
             className="inline-flex h-10 items-center gap-2 rounded-md border border-border px-3 text-sm text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
@@ -566,14 +559,14 @@ export default function Home() {
           </div>
         )}
 
-        {loading ? (
+        {showReasoningProgress ? (
           <ReasoningProgress steps={reasoningLoadSteps} />
         ) : (
           <div key={activeView} className="screen-enter min-h-0 flex-1 py-6">
             {activeView === "dashboard" && (
               <Dashboard
                 dashboard={dashboard}
-                onAnalyzePullRequest={() => setActiveView("reasoning")}
+                onAnalyzePullRequest={startPullRequestAnalysis}
               />
             )}
             {activeView === "evidence" && (
