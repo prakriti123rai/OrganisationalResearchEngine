@@ -32,6 +32,10 @@ import {
 } from "../components/actions/ActionCard";
 import { ApprovalPanel } from "../components/actions/ApprovalPanel";
 import {
+  Dashboard,
+  type DashboardData,
+} from "../components/dashboard/Dashboard";
+import {
   ArtifactViewer,
   type ExecutionRecord,
 } from "../components/execution/ArtifactViewer";
@@ -245,6 +249,7 @@ export default function Home() {
   );
   const [actions, setActions] = useState<SuggestedAction[]>([]);
   const [executions, setExecutions] = useState<ExecutionRecord[]>([]);
+  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [busyActionId, setBusyActionId] = useState<string | null>(null);
@@ -289,11 +294,15 @@ export default function Home() {
       const executionHistory = await fetchJson<ExecutionHistory>(
         `/execution/history?organization_id=${organizationId}`,
       );
+      const dashboardResult = await fetchJson<DashboardData>(
+        `/dashboard?organization_id=${organizationId}`,
+      );
       setEvidence(evidenceResult);
       setGraph(graphResult);
       setReasoningTrace(traceResult);
       setActions(actionPlan.actions);
       setExecutions(executionHistory.executions);
+      setDashboard(dashboardResult);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -496,9 +505,11 @@ export default function Home() {
                 ? "Milestone 10"
                 : activeView === "execution"
                   ? "Milestone 11"
-                  : activeView === "impact"
-                    ? "Milestone 9"
-                    : "Milestone 8"}
+                  : activeView === "dashboard"
+                    ? "Milestone 12"
+                    : activeView === "impact"
+                      ? "Milestone 9"
+                      : "Milestone 8"}
             </div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
@@ -512,11 +523,13 @@ export default function Home() {
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
               {activeView === "execution"
                 ? "Approved actions converted into generated engineering artifacts with execution history."
-                : activeView === "actions"
-                  ? "Generated engineering actions with human approval controls before Codex execution."
-                  : activeView === "reasoning" || activeView === "impact"
-                    ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
-                    : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
+                : activeView === "dashboard"
+                  ? "Organization health, recent reasoning, predictions, graph preview, and activity from the canonical APIs."
+                  : activeView === "actions"
+                    ? "Generated engineering actions with human approval controls before Codex execution."
+                    : activeView === "reasoning" || activeView === "impact"
+                      ? "Evidence-backed reasoning trace for the seeded pre-merge analysis."
+                      : "Live demo data from the seeded organization, evidence service, and Neo4j-backed organizational graph."}
             </p>
           </div>
           <button
@@ -543,9 +556,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="min-h-0 flex-1 py-6">
-            {activeView === "dashboard" && (
-              <Dashboard evidence={evidence} graph={graph} />
-            )}
+            {activeView === "dashboard" && <Dashboard dashboard={dashboard} />}
             {activeView === "evidence" && (
               <EvidenceExplorer evidence={evidence} />
             )}
@@ -1023,118 +1034,6 @@ function unique(values: string[]) {
   return Array.from(new Set(values.filter(Boolean)));
 }
 
-function Dashboard({
-  evidence,
-  graph,
-}: {
-  evidence: EvidenceRecord[];
-  graph: OrganizationalGraph | null;
-}) {
-  const evidenceBySource = countBy(evidence, (item) => item.source);
-  const nodeTypeCounts = countBy(
-    graph?.nodes ?? [],
-    (node) => node.entity_type,
-  );
-  const riskEvidence = evidence.filter(
-    (item) =>
-      item.summary.toLowerCase().includes("risk") ||
-      item.title.toLowerCase().includes("risk") ||
-      item.supported_signal_ids.some((signal) => signal.includes("risk")),
-  );
-  const affectedEdges =
-    graph?.edges.filter((edge) => edge.relationship_type === "affects")
-      .length ?? 0;
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-4 gap-4">
-        <Metric label="Evidence Records" value={evidence.length} />
-        <Metric label="Graph Nodes" value={graph?.node_count ?? 0} />
-        <Metric label="Graph Edges" value={graph?.edge_count ?? 0} />
-        <Metric label="PR Impact Edges" value={affectedEdges} tone="risk" />
-      </div>
-
-      <div className="grid grid-cols-[1.2fr_0.8fr] gap-6">
-        <section className="border border-border bg-muted p-5">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold">Recent Evidence</h2>
-            <span className="text-xs text-muted-foreground">
-              Seeded demo dataset
-            </span>
-          </div>
-          <div className="space-y-3">
-            {evidence.slice(0, 5).map((item) => (
-              <article
-                key={item.id}
-                className="border border-border bg-background p-4"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-sm font-semibold">{item.title}</h3>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {formatDate(item.timestamp)}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-5 text-muted-foreground">
-                  {item.summary}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <Pill>{titleCase(item.evidence_type)}</Pill>
-                  <Pill>{item.source}</Pill>
-                  <Pill>{item.referenced_entity_ids.length} entities</Pill>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <div className="border border-border bg-muted p-5">
-            <h2 className="text-lg font-semibold">Evidence Sources</h2>
-            <div className="mt-4 space-y-3">
-              {Object.entries(evidenceBySource).map(([source, count]) => (
-                <Bar
-                  key={source}
-                  label={source}
-                  value={count}
-                  max={evidence.length}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="border border-border bg-muted p-5">
-            <h2 className="text-lg font-semibold">Graph Composition</h2>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              {Object.entries(nodeTypeCounts).map(([type, count]) => (
-                <div
-                  key={type}
-                  className="border border-border bg-background p-3"
-                >
-                  <div className="text-muted-foreground">{titleCase(type)}</div>
-                  <div className="mt-1 text-xl font-semibold">{count}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="border border-risk/40 bg-risk/10 p-5">
-            <h2 className="text-lg font-semibold text-risk">
-              Risk Signals in Evidence
-            </h2>
-            <div className="mt-2 text-3xl font-semibold">
-              {riskEvidence.length}
-            </div>
-            <p className="mt-2 text-sm leading-5 text-muted-foreground">
-              Records mentioning checkout risk, hidden dependencies, or reviewer
-              concentration.
-            </p>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-}
-
 function EvidenceExplorer({ evidence }: { evidence: EvidenceRecord[] }) {
   const [query, setQuery] = useState("");
   const [source, setSource] = useState("all");
@@ -1406,30 +1305,6 @@ function TraceMetric({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Metric({
-  label,
-  value,
-  tone = "default",
-}: {
-  label: string;
-  value: number;
-  tone?: "default" | "risk";
-}) {
-  return (
-    <div className="border border-border bg-muted p-4">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div
-        className={[
-          "mt-2 text-3xl font-semibold",
-          tone === "risk" ? "text-risk" : "",
-        ].join(" ")}
-      >
-        {value}
-      </div>
-    </div>
-  );
-}
-
 function Pill({ children }: { children: ReactNode }) {
   return (
     <span className="inline-flex h-6 items-center rounded-md border border-border bg-accent px-2 text-xs text-muted-foreground">
@@ -1443,30 +1318,6 @@ function EvidenceCount({ label, value }: { label: string; value: number }) {
     <div className="border border-border bg-background px-3 py-2">
       <div className="text-muted-foreground">{label}</div>
       <div className="mt-1 text-sm font-semibold">{value}</div>
-    </div>
-  );
-}
-
-function Bar({
-  label,
-  value,
-  max,
-}: {
-  label: string;
-  value: number;
-  max: number;
-}) {
-  const width = max > 0 ? `${Math.max(8, (value / max) * 100)}%` : "0%";
-
-  return (
-    <div>
-      <div className="mb-1 flex justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span>{value}</span>
-      </div>
-      <div className="h-2 bg-background">
-        <div className="h-2 bg-primary" style={{ width }} />
-      </div>
     </div>
   );
 }

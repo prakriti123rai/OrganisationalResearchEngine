@@ -8,10 +8,10 @@ Architecture Freeze: LOCKED
 
 ## Overall Status
 
-Overall Completion: 78%
-Current Milestone: Milestone 11 - Execution Center complete
-Next Milestone: Milestone 12 - Dashboard & Navigation
-Demo Readiness: 85%
+Overall Completion: 85%
+Current Milestone: Milestone 12 - Dashboard & Navigation complete
+Next Milestone: Milestone 13 - Demo Polish
+Demo Readiness: 88%
 Architecture Freeze: Locked
 Current Branch: main
 
@@ -22,10 +22,10 @@ Current Branch: main
 | Metric | Value |
 |---------|-------|
 | Total Milestones | 14 |
-| Completed | 11 |
-| Remaining | 3 |
+| Completed | 12 |
+| Remaining | 2 |
 | Estimated Total Hours | 60 |
-| Actual Hours | 49 |
+| Actual Hours | 52 |
 | Blocked | No |
 
 ---
@@ -45,7 +45,7 @@ Current Branch: main
 | 9 | Impact Report | Complete | 3 | 3 | No | 2026-07-17 | Recorded after commit creation - c5a08d66ea39418c0d570a81bdfbd0b5e7e2bb87 | Implemented the engineering-friendly impact report UI using the existing reasoning trace, affected team and service summaries, risk timeline, confidence display, evidence-backed risk cards, expandable evidence, and evidence selection. |
 | 10 | Suggested Actions | Complete | 4 | 4 | No | 2026-07-18 | Recorded after commit creation - f63ad93787d431ac46d85cba80a0d007f2f1879c | Implemented persistent organizational action planning, deterministic action generation, approval, rejection, editing, artifact previews, confidence display, and the Suggested Actions UI. |
 | 11 | Execution Center | Complete | 4 | 4 | No | 2026-07-18 | Recorded after commit creation - 1e4f980c7d774d8f5f87336c8acfaa13dff28ba3 | Implemented safe Codex artifact generation, execution service APIs, approval-triggered execution, persisted execution history, logs, artifact metadata, and the Execution Center UI. |
-| 12 | Dashboard & Navigation | Not Started | 3 |  |  |  |  |  |
+| 12 | Dashboard & Navigation | Complete | 3 | 3 | No | 2026-07-19 | Recorded after commit creation - pending | Implemented dashboard summary APIs, organization API, health aggregation, counts, recent reasoning, recent predictions, recent activity, pending execution, Neo4j graph preview, named dashboard components, and complete seven-screen navigation. |
 | 13 | Demo Polish | Not Started | 5 |  |  |  |  |  |
 | 14 | Release Freeze | Not Started | 4 |  |  |  |  |  |
 
@@ -61,6 +61,7 @@ Milestone 8 complete = 57%.
 Milestone 9 complete = 64%.
 Milestone 10 complete = 71%.
 Milestone 11 complete = 78%.
+Milestone 12 complete = 85%.
 Milestone 14 complete = 100%.
 
 ---
@@ -361,6 +362,32 @@ Verified rejection persists rejected status.
 Verified regeneration without force preserves edited, approved, and rejected persisted action state.
 Verified browser-rendered Suggested Actions screen shows all generated action types, confidence, artifact preview, edit, approve, reject, and execution-lock messaging.
 Verified browser edit, approval, rejection, and persisted-state reload behavior.
+Verified backend compile, Ruff linting, and Black formatting.
+Verified frontend ESLint, Prettier formatting, and production build.
+Verified Docker Compose rebuild and startup.
+Verified containerized backend `/health` response with PostgreSQL and Neo4j reachable.
+Verified frontend HTTP 200 response.
+Verified recent backend and frontend logs contained no runtime errors.
+
+### 2026-07-19
+
+Milestone 12 started.
+Reviewed the provided Design Freeze PDF, the implementation milestones PDF containing the Final Implementation Specification, CODEX instructions, and progress log before implementation.
+Determined Milestone 12 - Dashboard & Navigation was the next incomplete milestone.
+
+Milestone 12 completed.
+Created the dashboard summary service and API with organization health, knowledge score, aggregate counts, recent pull requests, recent reasoning, recent predictions, recent activity, pending execution, and graph preview data.
+Created `GET /dashboard` and `GET /organization` while preserving the existing APIs.
+Built the Neo4j-backed graph preview around the connected PR impact neighborhood.
+Created the required dashboard components: `Dashboard.tsx`, `OrganizationCard.tsx`, `RecentReasoning.tsx`, and `GraphPreview.tsx`.
+Replaced the inline dashboard with the new canonical dashboard view.
+Verified all seven primary screens are present: Dashboard, Evidence, Graph, Reasoning, Impact, Actions, and Execution.
+Verified sidebar navigation opens every screen without broken views.
+Verified `GET /dashboard` returns health score, knowledge score, counts, recent PRs, recent reasoning, predictions, recent activity, pending execution, and a 12-node / 10-edge graph preview.
+Verified `GET /organization` returns the seeded organization.
+Verified browser-rendered dashboard shows organization health, knowledge score, recent reasoning, recent predictions, graph preview, recent activity, and all seven navigation items.
+Verified graph preview renders connected edges in the browser.
+Verified browser console has no errors and visible text has no detected overflow at 1280x720.
 Verified backend compile, Ruff linting, and Black formatting.
 Verified frontend ESLint, Prettier formatting, and production build.
 Verified Docker Compose rebuild and startup.

@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.actions import router as actions_router
+from app.api.dashboard import router as dashboard_router
 from app.api.evidence import router as evidence_router
 from app.api.execution import router as execution_router
 from app.api.graph import router as graph_router
@@ -31,6 +32,7 @@ app.include_router(reasoning_context_router)
 app.include_router(reasoning_router)
 app.include_router(actions_router)
 app.include_router(execution_router)
+app.include_router(dashboard_router)
 
 
 def _tcp_reachable(host: str, port: int, timeout_seconds: float = 1.0) -> bool:

@@ -102,3 +102,11 @@ curl http://localhost:8000/execution/execution-action-reasoning-demo-pr-482-docu
 ```
 
 Approval starts safe Codex artifact generation for approved actions, persists execution history, and records logs and artifact metadata without modifying production systems.
+Milestone 12 adds the dashboard summary APIs:
+
+```bash
+curl http://localhost:8000/dashboard?organization_id=org-demo-apex
+curl http://localhost:8000/organization?organization_id=org-demo-apex
+```
+
+The dashboard combines organization health, knowledge score, recent PRs, recent reasoning, predictions, recent activity, pending execution, and a Neo4j-backed graph preview.
