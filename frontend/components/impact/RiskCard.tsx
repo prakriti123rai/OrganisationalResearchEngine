@@ -23,8 +23,8 @@ export type RiskCardProps = {
 
 export function RiskCard({ risk, onSelectEvidence }: RiskCardProps) {
   return (
-    <article className="border border-risk/40 bg-risk/10 p-4">
-      <div className="flex items-start justify-between gap-4">
+    <article className="interactive-card border border-risk/40 bg-risk/10 p-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-risk" />
           <div className="min-w-0">

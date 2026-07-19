@@ -6,8 +6,8 @@ export function OrganizationCard({ dashboard }: { dashboard: DashboardData }) {
   const { organization, health, counts } = dashboard;
 
   return (
-    <section className="border border-border bg-muted p-5">
-      <div className="flex items-start justify-between gap-5">
+    <section className="polished-panel border p-5">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs uppercase text-primary">
             <Building2 className="h-4 w-4" />
@@ -18,13 +18,13 @@ export function OrganizationCard({ dashboard }: { dashboard: DashboardData }) {
             {organization.description}
           </p>
         </div>
-        <div className="grid w-56 grid-cols-2 gap-3 text-right">
+        <div className="grid w-full grid-cols-2 gap-3 text-right sm:w-56">
           <Score label="Health" value={health.health_score} />
           <Score label="Knowledge" value={health.knowledge_score} />
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-5 gap-3">
+      <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         <Metric label="Repositories" value={counts.repositories} />
         <Metric label="Evidence" value={counts.evidence} />
         <Metric label="Entities" value={counts.entities} />
@@ -32,7 +32,7 @@ export function OrganizationCard({ dashboard }: { dashboard: DashboardData }) {
         <Metric label="Pending Execution" value={counts.pending_execution} />
       </div>
 
-      <div className="mt-5 flex items-center justify-between border border-border bg-background px-4 py-3">
+      <div className="mt-5 flex flex-col gap-3 border border-border bg-background px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2 text-sm">
           <ShieldCheck className="h-4 w-4 text-confidence" />
           <span className="capitalize">
@@ -47,7 +47,7 @@ export function OrganizationCard({ dashboard }: { dashboard: DashboardData }) {
 
 function Score({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border border-confidence/40 bg-confidence/10 p-3">
+    <div className="interactive-card border border-confidence/40 bg-confidence/10 p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 text-2xl font-semibold text-confidence">{value}</div>
     </div>
@@ -56,7 +56,7 @@ function Score({ label, value }: { label: string; value: number }) {
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border border-border bg-background p-3">
+    <div className="interactive-card border border-border bg-background p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 text-xl font-semibold">{value}</div>
     </div>

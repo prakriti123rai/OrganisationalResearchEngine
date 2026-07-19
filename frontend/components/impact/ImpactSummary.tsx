@@ -26,10 +26,10 @@ export function ImpactSummary({
   onSelectEvidence,
 }: ImpactSummaryProps) {
   return (
-    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_360px] gap-5">
-      <section className="min-h-0 overflow-y-auto border border-border bg-background p-5">
-        <div className="grid grid-cols-[1fr_180px_180px] gap-4">
-          <div className="border border-border bg-muted p-4">
+    <div className="grid min-h-[calc(100vh-190px)] grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
+      <section className="min-h-0 overflow-y-auto border border-border bg-background p-4 sm:p-5">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px_180px]">
+          <div className="polished-panel border p-4">
             <div className="flex items-center gap-2 text-sm font-semibold">
               <GitBranch className="h-4 w-4 text-primary" />
               Impact Summary
@@ -50,8 +50,8 @@ export function ImpactSummary({
           />
         </div>
 
-        <div className="mt-5 grid grid-cols-[0.9fr_1.1fr] gap-5">
-          <section className="border border-border bg-muted p-5">
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <section className="polished-panel border p-5">
             <div className="flex items-center gap-3">
               <Users className="h-4 w-4 text-primary" />
               <h2 className="text-base font-semibold">Affected Teams</h2>
@@ -59,7 +59,7 @@ export function ImpactSummary({
             <div className="mt-4 grid gap-3">
               {report.affectedTeams.map((team) => (
                 <div
-                  className="border border-border bg-background px-3 py-2 text-sm"
+                  className="interactive-card border border-border bg-background px-3 py-2 text-sm"
                   key={team}
                 >
                   {team}
@@ -68,7 +68,7 @@ export function ImpactSummary({
             </div>
           </section>
 
-          <section className="border border-border bg-muted p-5">
+          <section className="polished-panel border p-5">
             <h2 className="text-base font-semibold">Risk Timeline</h2>
             <div className="mt-4 space-y-3">
               {report.riskTimeline.map((item, index) => (
@@ -79,7 +79,7 @@ export function ImpactSummary({
                   <div className="grid h-7 w-7 place-items-center border border-primary/40 bg-primary/10 text-xs text-primary">
                     {index + 1}
                   </div>
-                  <div className="border border-border bg-background px-3 py-2 text-muted-foreground">
+                  <div className="interactive-card border border-border bg-background px-3 py-2 text-muted-foreground">
                     {item}
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export function ImpactSummary({
           />
         </div>
 
-        <section className="mt-5 border border-border bg-muted p-5">
+        <section className="polished-panel mt-5 border p-5">
           <h2 className="text-base font-semibold">Evidence-Backed Risks</h2>
           <div className="mt-4 grid gap-3">
             {report.risks.map((risk) => (
@@ -109,8 +109,8 @@ export function ImpactSummary({
         </section>
       </section>
 
-      <aside className="min-h-0 overflow-y-auto border border-border bg-muted p-4">
-        <section className="border border-border bg-background p-4">
+      <aside className="polished-panel min-h-0 overflow-y-auto border p-4">
+        <section className="interactive-card border border-border bg-background p-4">
           <h2 className="text-sm font-semibold">Selected Evidence</h2>
           {report.selectedEvidence ? (
             <article className="mt-3">
@@ -131,12 +131,12 @@ export function ImpactSummary({
           )}
         </section>
 
-        <section className="mt-5 border border-border bg-background p-4">
+        <section className="interactive-card mt-5 border border-border bg-background p-4">
           <h2 className="text-sm font-semibold">Primary Evidence</h2>
           <div className="mt-3 space-y-2">
             {report.primaryEvidence.map((evidence) => (
               <button
-                className="w-full border border-border bg-muted px-3 py-2 text-left text-xs transition hover:border-primary hover:text-foreground"
+                className="interactive-card w-full border border-border bg-muted px-3 py-2 text-left text-xs transition hover:border-primary hover:text-foreground"
                 key={evidence.id}
                 onClick={() => onSelectEvidence(evidence.id)}
                 type="button"
@@ -164,7 +164,7 @@ function ImpactStat({
   value: string;
 }) {
   return (
-    <div className="border border-border bg-muted p-4">
+    <div className="interactive-card polished-panel border p-4">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         {icon}
         <span>{label}</span>

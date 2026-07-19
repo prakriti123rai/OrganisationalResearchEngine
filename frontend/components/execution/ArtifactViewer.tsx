@@ -22,7 +22,7 @@ export function ArtifactViewer({
 }) {
   if (!execution) {
     return (
-      <aside className="grid min-h-0 place-items-center border border-border bg-muted p-5 text-sm text-muted-foreground">
+      <aside className="polished-panel grid min-h-[360px] place-items-center border p-5 text-sm text-muted-foreground">
         Select a completed execution to inspect the generated artifact.
       </aside>
     );
@@ -34,8 +34,8 @@ export function ArtifactViewer({
   const fileName = stringMetadata(execution.result_metadata.file_name);
 
   return (
-    <aside className="min-h-0 overflow-y-auto border border-border bg-muted p-5">
-      <div className="flex items-start justify-between gap-4">
+    <aside className="polished-panel min-h-0 overflow-y-auto border p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <FileText className="h-3.5 w-3.5" />
@@ -50,7 +50,7 @@ export function ArtifactViewer({
             <div className="mt-2 text-xs text-muted-foreground">{fileName}</div>
           )}
         </div>
-        <div className="border border-confidence/40 bg-confidence/10 px-3 py-2 text-right">
+        <div className="interactive-card border border-confidence/40 bg-confidence/10 px-3 py-2 text-right">
           <div className="flex items-center justify-end gap-1 text-xs text-confidence">
             <ShieldCheck className="h-3.5 w-3.5" />
             Safe
@@ -61,14 +61,14 @@ export function ArtifactViewer({
         </div>
       </div>
 
-      <section className="mt-5 border border-border bg-background p-4">
+      <section className="interactive-card mt-5 border border-border bg-background p-4">
         <h3 className="text-sm font-semibold">Artifact Preview</h3>
         <pre className="mt-3 whitespace-pre-wrap border border-border bg-muted p-3 text-xs leading-5 text-muted-foreground">
           {artifactContent}
         </pre>
       </section>
 
-      <section className="mt-5 border border-border bg-background p-4">
+      <section className="interactive-card mt-5 border border-border bg-background p-4">
         <h3 className="text-sm font-semibold">Execution Logs</h3>
         <pre className="mt-3 whitespace-pre-wrap border border-border bg-muted p-3 text-xs leading-5 text-muted-foreground">
           {execution.logs ?? "No execution logs recorded."}

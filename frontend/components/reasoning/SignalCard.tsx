@@ -6,7 +6,7 @@ export type SignalCardProps = {
 
 export function SignalCard({ title, summary, confidence }: SignalCardProps) {
   return (
-    <article className="border border-border bg-background p-3">
+    <article className="interactive-card border border-border bg-background p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="text-sm font-semibold">{title}</div>
         {confidence && (

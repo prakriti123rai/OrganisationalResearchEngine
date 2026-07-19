@@ -14,7 +14,7 @@ export function HypothesisCard({
   assumptionIds,
 }: HypothesisCardProps) {
   return (
-    <article className="border border-primary/35 bg-primary/10 p-3">
+    <article className="interactive-card border border-primary/35 bg-primary/10 p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="text-sm font-semibold">{title}</div>
         {confidence && (

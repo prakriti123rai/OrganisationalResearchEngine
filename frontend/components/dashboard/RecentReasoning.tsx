@@ -11,8 +11,8 @@ export function RecentReasoning({
   reasoning: RecentReasoningItem[];
 }) {
   return (
-    <section className="grid grid-cols-2 gap-5">
-      <div className="border border-border bg-muted p-5">
+    <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div className="polished-panel border p-5">
         <div className="flex items-center gap-2">
           <Brain className="h-4 w-4 text-primary" />
           <h2 className="text-base font-semibold">Recent Reasoning</h2>
@@ -20,7 +20,7 @@ export function RecentReasoning({
         <div className="mt-4 space-y-3">
           {reasoning.map((item) => (
             <article
-              className="border border-border bg-background p-4"
+              className="interactive-card border border-border bg-background p-4"
               key={item.id}
             >
               <div className="flex items-start justify-between gap-3">
@@ -45,7 +45,7 @@ export function RecentReasoning({
         </div>
       </div>
 
-      <div className="border border-border bg-muted p-5">
+      <div className="polished-panel border p-5">
         <div className="flex items-center gap-2">
           <Gauge className="h-4 w-4 text-risk" />
           <h2 className="text-base font-semibold">Recent Predictions</h2>
@@ -53,7 +53,7 @@ export function RecentReasoning({
         <div className="mt-4 space-y-3">
           {predictions.map((prediction) => (
             <article
-              className="border border-border bg-background p-4"
+              className="interactive-card border border-border bg-background p-4"
               key={prediction.id}
             >
               <div className="flex items-start justify-between gap-3">

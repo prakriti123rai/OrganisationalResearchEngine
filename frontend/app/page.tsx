@@ -13,6 +13,7 @@ import {
 import {
   BarChart3,
   Brain,
+  CheckCircle2,
   ClipboardCheck,
   CircleAlert,
   Database,
@@ -165,6 +166,24 @@ const navigation = [
   { id: "actions" as const, name: "Actions", icon: ClipboardCheck },
   { id: "execution" as const, name: "Execution", icon: FileCode2 },
 ];
+
+const reasoningLoadSteps = [
+  "Collecting evidence",
+  "Expanding graph",
+  "Activating signals",
+  "Resolving conflicts",
+  "Preparing safe actions",
+];
+
+const viewMilestoneLabels: Record<View, string> = {
+  dashboard: "Milestone 13 - Demo Polish",
+  evidence: "Milestone 13 - Demo Polish",
+  graph: "Milestone 13 - Demo Polish",
+  reasoning: "Milestone 13 - Demo Polish",
+  impact: "Milestone 13 - Demo Polish",
+  actions: "Milestone 13 - Demo Polish",
+  execution: "Milestone 13 - Demo Polish",
+};
 
 const nodeTypeOrder = [
   "organization",
@@ -455,9 +474,9 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex min-h-screen bg-background text-foreground">
-      <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-muted px-4 py-5">
-        <div className="mb-8">
+    <main className="flex min-h-screen flex-col bg-background text-foreground lg:flex-row">
+      <aside className="flex w-full shrink-0 flex-col border-b border-border bg-muted px-4 py-4 lg:min-h-screen lg:w-64 lg:border-b-0 lg:border-r lg:py-5">
+        <div className="mb-5 lg:mb-8">
           <div className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
             ORE
           </div>
@@ -465,7 +484,10 @@ export default function Home() {
             Organizational Reasoning Engine
           </div>
         </div>
-        <nav className="space-y-1" aria-label="Primary navigation">
+        <nav
+          className="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:block lg:space-y-1"
+          aria-label="Primary navigation"
+        >
           {navigation.map((item) => {
             const Icon = item.icon;
             const active = activeView === item.id;
@@ -473,10 +495,10 @@ export default function Home() {
               <button
                 key={item.id}
                 className={[
-                  "flex h-10 w-full items-center gap-3 rounded-md px-3 text-left text-sm transition",
+                  "interactive-card flex h-10 w-full items-center gap-3 rounded-md px-3 text-left text-sm transition",
                   active
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    ? "border border-primary/30 bg-accent text-accent-foreground shadow-[inset_3px_0_0_hsl(var(--primary))]"
+                    : "border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                 ].join(" ")}
                 onClick={() => setActiveView(item.id)}
                 type="button"
@@ -488,7 +510,7 @@ export default function Home() {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-border pt-4 text-xs text-muted-foreground">
+        <div className="mt-5 border-t border-border pt-4 text-xs text-muted-foreground lg:mt-auto">
           <div className="flex items-center gap-2">
             <Database className="h-4 w-4 text-confidence" />
             <span>{organizationId}</span>
@@ -497,19 +519,11 @@ export default function Home() {
         </div>
       </aside>
 
-      <section className="flex min-w-0 flex-1 flex-col px-8 py-7">
-        <header className="flex items-start justify-between gap-6 border-b border-border pb-6">
+      <section className="flex min-w-0 flex-1 flex-col px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+        <header className="flex flex-col gap-5 border-b border-border pb-6 md:flex-row md:items-start md:justify-between">
           <div>
             <div className="text-sm text-muted-foreground">
-              {activeView === "actions"
-                ? "Milestone 10"
-                : activeView === "execution"
-                  ? "Milestone 11"
-                  : activeView === "dashboard"
-                    ? "Milestone 12"
-                    : activeView === "impact"
-                      ? "Milestone 9"
-                      : "Milestone 8"}
+              {viewMilestoneLabels[activeView]}
             </div>
             <h1 className="mt-2 text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
@@ -537,7 +551,10 @@ export default function Home() {
             onClick={() => void loadData()}
             type="button"
           >
-            <RefreshCw aria-hidden="true" className="h-4 w-4" />
+            <RefreshCw
+              aria-hidden="true"
+              className={["h-4 w-4", loading ? "animate-spin" : ""].join(" ")}
+            />
             Refresh
           </button>
         </header>
@@ -550,12 +567,9 @@ export default function Home() {
         )}
 
         {loading ? (
-          <div className="grid flex-1 place-items-center text-sm text-muted-foreground">
-            Collecting evidence, expanding relationships, and activating
-            signals...
-          </div>
+          <ReasoningProgress steps={reasoningLoadSteps} />
         ) : (
-          <div className="min-h-0 flex-1 py-6">
+          <div key={activeView} className="screen-enter min-h-0 flex-1 py-6">
             {activeView === "dashboard" && <Dashboard dashboard={dashboard} />}
             {activeView === "evidence" && (
               <EvidenceExplorer evidence={evidence} />
@@ -601,6 +615,52 @@ export default function Home() {
   );
 }
 
+function ReasoningProgress({ steps }: { steps: string[] }) {
+  return (
+    <div className="grid flex-1 place-items-center py-10 text-sm text-muted-foreground">
+      <section className="reasoning-progress w-full max-w-3xl border border-border bg-muted p-5">
+        <div className="flex items-center justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <span className="status-dot grid h-2.5 w-2.5 rounded-full bg-confidence" />
+              Reasoning in progress
+            </div>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              ORE is building the evidence chain, checking dependencies, and
+              preparing the demo workflow.
+            </p>
+          </div>
+          <div className="hidden items-center gap-1 border border-confidence/40 bg-confidence/10 px-3 py-2 text-xs text-confidence sm:flex">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Evidence first
+          </div>
+        </div>
+        <div className="mt-5 grid gap-2 sm:grid-cols-5">
+          {steps.map((step, index) => (
+            <div
+              className="border border-border bg-background px-3 py-2"
+              key={step}
+              style={{
+                animation: `fadeIn 220ms ease-out ${index * 80}ms both`,
+              }}
+            >
+              <div className="mb-2 h-1 overflow-hidden bg-accent">
+                <div
+                  className="h-full origin-left bg-primary"
+                  style={{
+                    animation: `stagePulse 1.1s ease-in-out ${index * 120}ms infinite`,
+                  }}
+                />
+              </div>
+              <div className="text-xs text-muted-foreground">{step}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function ExecutionCenter({
   actions,
   busyActionId,
@@ -622,14 +682,14 @@ function ExecutionCenter({
 
   if (actions.length === 0) {
     return (
-      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+      <div className="polished-panel grid min-h-[420px] place-items-center border text-sm text-muted-foreground">
         Preparing approved actions for Codex artifact generation...
       </div>
     );
   }
 
   return (
-    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_420px] gap-5">
+    <div className="grid min-h-[calc(100vh-190px)] grid-cols-1 gap-5 xl:grid-cols-[1fr_420px]">
       <div className="min-h-0 space-y-5">
         <ExecutionTimeline execution={selectedExecution} />
         <ExecutionPanel
@@ -675,24 +735,24 @@ function SuggestedActions({
 
   if (actions.length === 0) {
     return (
-      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+      <div className="polished-panel grid min-h-[420px] place-items-center border text-sm text-muted-foreground">
         Preparing safe actions from the reasoning report...
       </div>
     );
   }
 
   return (
-    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_420px] gap-5">
-      <section className="min-h-0 overflow-y-auto border border-border bg-background p-5">
-        <div className="grid grid-cols-4 gap-3">
+    <div className="grid min-h-[calc(100vh-190px)] grid-cols-1 gap-5 xl:grid-cols-[1fr_420px]">
+      <section className="min-h-0 overflow-y-auto border border-border bg-background p-4 sm:p-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <TraceMetric label="Generated" value={actions.length} />
           <TraceMetric label="Proposed" value={statusCounts.proposed ?? 0} />
           <TraceMetric label="Approved" value={statusCounts.approved ?? 0} />
           <TraceMetric label="Rejected" value={statusCounts.rejected ?? 0} />
         </div>
 
-        <section className="mt-5 border border-border bg-muted p-5">
-          <div className="flex items-center justify-between gap-4">
+        <section className="polished-panel mt-5 border p-4 sm:p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-base font-semibold">Generated Actions</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -749,7 +809,7 @@ function ImpactReport({
 
   if (!trace || !report) {
     return (
-      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+      <div className="polished-panel grid min-h-[420px] place-items-center border text-sm text-muted-foreground">
         Predicting impacts, ranking affected services, and linking evidence...
       </div>
     );
@@ -775,16 +835,16 @@ function ReasoningWorkspace({
 
   if (!trace) {
     return (
-      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+      <div className="polished-panel grid min-h-[420px] place-items-center border text-sm text-muted-foreground">
         Collecting evidence, expanding graph, and preparing reasoning trace...
       </div>
     );
   }
 
   return (
-    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_360px] gap-5">
-      <section className="min-h-0 border border-border bg-background p-5">
-        <div className="mb-5 flex items-start justify-between gap-4">
+    <div className="grid min-h-[calc(100vh-190px)] grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
+      <section className="min-h-0 border border-border bg-background p-4 sm:p-5">
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold">
               Pre-Merge Organizational Reasoning
@@ -807,7 +867,7 @@ function ReasoningWorkspace({
         />
       </section>
 
-      <aside className="min-h-0 overflow-y-auto border border-border bg-muted p-4">
+      <aside className="polished-panel min-h-0 overflow-y-auto border p-4">
         <div className="grid grid-cols-2 gap-3">
           <TraceMetric label="Stages" value={trace.stages.length} />
           <TraceMetric label="Findings" value={trace.result.findings.length} />
@@ -826,7 +886,7 @@ function ReasoningWorkspace({
           <div className="mt-3 space-y-3">
             {trace.result.findings.map((finding) => (
               <article
-                className="border border-border bg-muted p-3"
+                className="interactive-card border border-border bg-muted p-3"
                 key={finding.id}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -1065,7 +1125,7 @@ function EvidenceExplorer({ evidence }: { evidence: EvidenceRecord[] }) {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-[1fr_180px_220px] gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_180px_220px]">
         <label className="relative">
           <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <input
@@ -1101,8 +1161,11 @@ function EvidenceExplorer({ evidence }: { evidence: EvidenceRecord[] }) {
 
       <div className="grid gap-3">
         {filtered.map((item) => (
-          <article key={item.id} className="border border-border bg-muted p-4">
-            <div className="grid grid-cols-[1fr_auto] gap-4">
+          <article
+            key={item.id}
+            className="interactive-card polished-panel screen-enter border p-4"
+          >
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto]">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-base font-semibold">{item.title}</h2>
@@ -1118,7 +1181,7 @@ function EvidenceExplorer({ evidence }: { evidence: EvidenceRecord[] }) {
                 <div className="mt-1">{item.source_reference}</div>
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-4 gap-3 text-xs">
+            <div className="mt-4 grid grid-cols-2 gap-3 text-xs md:grid-cols-4">
               <EvidenceCount
                 label="Entities"
                 value={item.referenced_entity_ids.length}
@@ -1158,8 +1221,8 @@ function GraphExplorer({
   );
 
   return (
-    <div className="grid h-[calc(100vh-190px)] grid-cols-[1fr_320px] gap-5">
-      <section className="min-h-0 border border-border bg-muted">
+    <div className="grid min-h-[calc(100vh-190px)] grid-cols-1 gap-5 xl:grid-cols-[1fr_320px]">
+      <section className="polished-panel min-h-[520px] border">
         <div className="flex h-12 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-3">
             <Network className="h-4 w-4 text-primary" />
@@ -1183,7 +1246,7 @@ function GraphExplorer({
             Sync Neo4j
           </button>
         </div>
-        <div className="h-[calc(100%-48px)]">
+        <div className="h-[calc(100%-48px)] min-h-[472px]">
           <ReactFlow
             colorMode="dark"
             edges={edges}
@@ -1203,7 +1266,7 @@ function GraphExplorer({
         </div>
       </section>
 
-      <aside className="min-h-0 overflow-auto border border-border bg-muted p-4">
+      <aside className="polished-panel min-h-0 overflow-auto border p-4">
         <h2 className="text-base font-semibold">Relationship Evidence</h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
           Canonical relationship edges with retained evidence links.
@@ -1212,7 +1275,7 @@ function GraphExplorer({
           {(highContextEdges ?? []).slice(0, 8).map((edge) => (
             <article
               key={edge.id}
-              className="border border-border bg-background p-3"
+              className="interactive-card border border-border bg-background p-3"
             >
               <div className="text-sm font-semibold">
                 {titleCase(edge.relationship_type)}
@@ -1266,10 +1329,12 @@ function buildFlowGraph(graph: OrganizationalGraph | null): {
         borderRadius: 6,
         border: "1px solid rgba(148, 163, 184, 0.55)",
         background: nodeColors[node.entity_type] ?? "#64748b",
+        boxShadow: "0 16px 32px rgba(0, 0, 0, 0.28)",
         color: "#06111f",
         fontSize: 12,
         fontWeight: 700,
         whiteSpace: "pre-line",
+        transition: "box-shadow 160ms ease, transform 160ms ease",
       },
     } satisfies Node;
   });
@@ -1279,9 +1344,11 @@ function buildFlowGraph(graph: OrganizationalGraph | null): {
     source: edge.source_entity_id,
     target: edge.target_entity_id,
     label: titleCase(edge.relationship_type),
+    type: "smoothstep",
     animated:
       edge.relationship_type === "affects" ||
       edge.relationship_type === "depends_on",
+    interactionWidth: 18,
     style: {
       stroke: edge.relationship_type === "affects" ? "#fb7185" : "#93c5fd",
       strokeWidth: edge.strength === "strong" ? 2.5 : 1.5,
@@ -1298,7 +1365,7 @@ function buildFlowGraph(graph: OrganizationalGraph | null): {
 
 function TraceMetric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border border-border bg-background p-3">
+    <div className="interactive-card border border-border bg-background p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 text-xl font-semibold">{value}</div>
     </div>
@@ -1307,7 +1374,7 @@ function TraceMetric({ label, value }: { label: string; value: number }) {
 
 function Pill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex h-6 items-center rounded-md border border-border bg-accent px-2 text-xs text-muted-foreground">
+    <span className="inline-flex min-h-6 items-center rounded-md border border-border bg-accent px-2 py-1 text-xs leading-4 text-muted-foreground">
       {children}
     </span>
   );

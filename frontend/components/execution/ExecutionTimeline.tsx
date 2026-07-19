@@ -27,7 +27,7 @@ export function ExecutionTimeline({
   ];
 
   return (
-    <section className="border border-border bg-muted p-4">
+    <section className="polished-panel border p-4">
       <div className="flex items-center gap-2">
         <FileCode2 className="h-4 w-4 text-primary" />
         <h2 className="text-sm font-semibold">Execution Timeline</h2>
@@ -37,7 +37,7 @@ export function ExecutionTimeline({
           const StepIcon = step.complete ? CheckCircle2 : Circle;
           return (
             <div
-              className="flex items-center justify-between border border-border bg-background px-3 py-2 text-sm"
+              className="interactive-card flex items-center justify-between border border-border bg-background px-3 py-2 text-sm"
               key={step.label}
             >
               <div className="flex items-center gap-2">

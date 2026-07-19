@@ -22,10 +22,10 @@ export function ActionCard({ action, active, onSelect }: ActionCardProps) {
   return (
     <button
       className={[
-        "w-full border p-4 text-left transition",
+        "interactive-card w-full border p-4 text-left transition",
         active
           ? "border-primary bg-primary/10"
-          : "border-border bg-muted hover:border-primary",
+          : "border-border bg-muted hover:border-primary hover:bg-accent/60",
       ].join(" ")}
       onClick={() => onSelect(action)}
       type="button"
@@ -34,7 +34,7 @@ export function ActionCard({ action, active, onSelect }: ActionCardProps) {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-semibold">{action.title}</h3>
-            <span className="border border-border bg-background px-2 py-1 text-xs text-muted-foreground">
+            <span className="rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground">
               {actionTypeLabel(action.action_type)}
             </span>
           </div>
@@ -43,7 +43,7 @@ export function ActionCard({ action, active, onSelect }: ActionCardProps) {
           </p>
         </div>
         <div className="shrink-0 text-right">
-          <div className="flex items-center justify-end gap-1 text-xs capitalize">
+          <div className="flex items-center justify-end gap-1 text-xs capitalize text-foreground">
             <StatusIcon className="h-3.5 w-3.5" />
             {action.status}
           </div>

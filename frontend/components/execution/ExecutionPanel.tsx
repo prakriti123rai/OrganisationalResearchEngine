@@ -33,8 +33,8 @@ export function ExecutionPanel({
   );
 
   return (
-    <section className="min-h-0 overflow-y-auto border border-border bg-background p-5">
-      <div className="grid grid-cols-4 gap-3">
+    <section className="min-h-0 overflow-y-auto border border-border bg-background p-4 sm:p-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <ExecutionMetric label="Queued" value={executableActions.length} />
         <ExecutionMetric label="Running" value={runningCount(executions)} />
         <ExecutionMetric label="Completed" value={completedExecutions.length} />
@@ -47,7 +47,7 @@ export function ExecutionPanel({
         />
       </div>
 
-      <section className="mt-5 border border-border bg-muted p-5">
+      <section className="polished-panel mt-5 border p-4 sm:p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-base font-semibold">Pending Automations</h2>
@@ -65,13 +65,13 @@ export function ExecutionPanel({
           ) : (
             executableActions.map((action) => (
               <article
-                className="grid grid-cols-[1fr_auto] gap-4 border border-border bg-background p-4"
+                className="interactive-card grid grid-cols-1 gap-4 border border-border bg-background p-4 sm:grid-cols-[1fr_auto]"
                 key={action.id}
               >
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-sm font-semibold">{action.title}</h3>
-                    <span className="border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
+                    <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
                       {actionTypeLabel(action.action_type)}
                     </span>
                   </div>
@@ -80,7 +80,7 @@ export function ExecutionPanel({
                   </p>
                 </div>
                 <button
-                  className="inline-flex h-10 items-center justify-center gap-2 border border-confidence/40 bg-confidence/10 px-3 text-sm text-confidence transition hover:bg-confidence/20 disabled:opacity-50"
+                  className="interactive-card inline-flex h-10 items-center justify-center gap-2 rounded-md border border-confidence/40 bg-confidence/10 px-3 text-sm text-confidence transition hover:bg-confidence/20 disabled:opacity-50"
                   disabled={busyActionId === action.id}
                   onClick={() => onStartExecution(action)}
                   type="button"
@@ -94,7 +94,7 @@ export function ExecutionPanel({
         </div>
       </section>
 
-      <section className="mt-5 border border-border bg-muted p-5">
+      <section className="polished-panel mt-5 border p-4 sm:p-5">
         <h2 className="text-base font-semibold">Completed Actions</h2>
         <div className="mt-4 grid gap-3">
           {executions.map((execution) => {
@@ -105,9 +105,10 @@ export function ExecutionPanel({
               <button
                 className={[
                   "w-full border p-4 text-left transition",
+                  "interactive-card",
                   active
                     ? "border-primary bg-primary/10"
-                    : "border-border bg-background hover:border-primary",
+                    : "border-border bg-background hover:border-primary hover:bg-accent/60",
                 ].join(" ")}
                 key={execution.id}
                 onClick={() => onSelectExecution(execution.id)}
@@ -119,7 +120,7 @@ export function ExecutionPanel({
                       <h3 className="text-sm font-semibold">
                         {execution.artifact_title ?? execution.id}
                       </h3>
-                      <span className="border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
+                      <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
                         {execution.artifact_type
                           ? actionTypeLabel(execution.artifact_type)
                           : "Execution"}
@@ -146,7 +147,7 @@ export function ExecutionPanel({
 
 function ExecutionMetric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border border-border bg-background p-3">
+    <div className="interactive-card border border-border bg-background p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 text-xl font-semibold">{value}</div>
     </div>

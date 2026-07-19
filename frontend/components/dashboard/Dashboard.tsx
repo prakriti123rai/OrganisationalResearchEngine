@@ -102,7 +102,7 @@ export type GraphPreviewEdge = {
 export function Dashboard({ dashboard }: { dashboard: DashboardData | null }) {
   if (!dashboard) {
     return (
-      <div className="grid h-[calc(100vh-190px)] place-items-center border border-border bg-muted text-sm text-muted-foreground">
+      <div className="polished-panel grid min-h-[420px] place-items-center border text-sm text-muted-foreground">
         Summarizing organization health, graph coverage, and recent reasoning...
       </div>
     );
@@ -112,7 +112,7 @@ export function Dashboard({ dashboard }: { dashboard: DashboardData | null }) {
     <div className="space-y-5">
       <OrganizationCard dashboard={dashboard} />
 
-      <div className="grid grid-cols-[1fr_360px] gap-5">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           <RecentReasoning
             predictions={dashboard.recent_predictions}
@@ -135,7 +135,7 @@ function PullRequestPanel({
   pullRequests: RecentPullRequest[];
 }) {
   return (
-    <section className="border border-border bg-muted p-5">
+    <section className="polished-panel border p-5">
       <div className="flex items-center gap-2">
         <GitPullRequest className="h-4 w-4 text-primary" />
         <h2 className="text-base font-semibold">Recent PRs</h2>
@@ -143,7 +143,7 @@ function PullRequestPanel({
       <div className="mt-4 space-y-3">
         {pullRequests.map((pullRequest) => (
           <article
-            className="border border-border bg-background p-3"
+            className="interactive-card border border-border bg-background p-3"
             key={pullRequest.id}
           >
             <div className="text-sm font-semibold">{pullRequest.title}</div>
@@ -160,7 +160,7 @@ function PullRequestPanel({
 
 function ActivityPanel({ activity }: { activity: RecentActivity[] }) {
   return (
-    <section className="border border-border bg-muted p-5">
+    <section className="polished-panel border p-5">
       <div className="flex items-center gap-2">
         <Activity className="h-4 w-4 text-confidence" />
         <h2 className="text-base font-semibold">Recent Activity</h2>
@@ -168,7 +168,7 @@ function ActivityPanel({ activity }: { activity: RecentActivity[] }) {
       <div className="mt-4 space-y-3">
         {activity.map((item) => (
           <article
-            className="border border-border bg-background p-3"
+            className="interactive-card border border-border bg-background p-3"
             key={item.id}
           >
             <div className="flex items-start justify-between gap-3">

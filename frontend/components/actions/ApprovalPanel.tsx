@@ -39,7 +39,7 @@ export function ApprovalPanel({
 
   if (!action) {
     return (
-      <aside className="grid min-h-0 place-items-center border border-border bg-muted p-5 text-sm text-muted-foreground">
+      <aside className="polished-panel grid min-h-[360px] place-items-center border p-5 text-sm text-muted-foreground">
         Select a generated action for approval.
       </aside>
     );
@@ -51,8 +51,8 @@ export function ApprovalPanel({
   const canReject = action.status === "proposed";
 
   return (
-    <aside className="min-h-0 overflow-y-auto border border-border bg-muted p-5">
-      <div className="flex items-start justify-between gap-4">
+    <aside className="polished-panel min-h-0 overflow-y-auto border p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="text-xs text-muted-foreground">
             {actionTypeLabel(action.action_type)}
@@ -67,7 +67,7 @@ export function ApprovalPanel({
             <h2 className="mt-2 text-lg font-semibold">{action.title}</h2>
           )}
         </div>
-        <div className="border border-confidence/40 bg-confidence/10 px-3 py-2 text-right">
+        <div className="interactive-card border border-confidence/40 bg-confidence/10 px-3 py-2 text-right">
           <div className="flex items-center justify-end gap-1 text-xs text-confidence">
             <ShieldCheck className="h-3.5 w-3.5" />
             {action.confidence}
@@ -78,7 +78,7 @@ export function ApprovalPanel({
         </div>
       </div>
 
-      <section className="mt-5 border border-border bg-background p-4">
+      <section className="interactive-card mt-5 border border-border bg-background p-4">
         <h3 className="text-sm font-semibold">Action Plan</h3>
         {editing ? (
           <textarea
@@ -93,7 +93,7 @@ export function ApprovalPanel({
         )}
       </section>
 
-      <section className="mt-5 border border-border bg-background p-4">
+      <section className="interactive-card mt-5 border border-border bg-background p-4">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold">Artifact Preview</h3>
           <span className="text-xs text-muted-foreground">Codex ready</span>
@@ -111,7 +111,7 @@ export function ApprovalPanel({
         )}
       </section>
 
-      <section className="mt-5 border border-border bg-background p-4">
+      <section className="interactive-card mt-5 border border-border bg-background p-4">
         <h3 className="text-sm font-semibold">Evidence</h3>
         <div className="mt-3 flex flex-wrap gap-2">
           {evidenceIdsFrom(action).map((evidenceId) => (
@@ -125,10 +125,10 @@ export function ApprovalPanel({
         </div>
       </section>
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {editing ? (
           <button
-            className="inline-flex h-10 items-center justify-center gap-2 border border-confidence/40 bg-confidence/10 text-sm text-confidence transition hover:bg-confidence/20 disabled:opacity-50"
+            className="interactive-card inline-flex h-10 items-center justify-center gap-2 rounded-md border border-confidence/40 bg-confidence/10 text-sm text-confidence transition hover:bg-confidence/20 disabled:opacity-50"
             disabled={
               disabled || title.trim() === "" || description.trim() === ""
             }
@@ -146,7 +146,7 @@ export function ApprovalPanel({
           </button>
         ) : (
           <button
-            className="inline-flex h-10 items-center justify-center gap-2 border border-border text-sm text-muted-foreground transition hover:border-primary hover:text-foreground disabled:opacity-50"
+            className="interactive-card inline-flex h-10 items-center justify-center gap-2 rounded-md border border-border text-sm text-muted-foreground transition hover:border-primary hover:text-foreground disabled:opacity-50"
             disabled={!canEdit || disabled}
             onClick={() => setEditing(true)}
             type="button"
@@ -156,7 +156,7 @@ export function ApprovalPanel({
           </button>
         )}
         <button
-          className="inline-flex h-10 items-center justify-center gap-2 border border-confidence/40 bg-confidence/10 text-sm text-confidence transition hover:bg-confidence/20 disabled:opacity-50"
+          className="interactive-card inline-flex h-10 items-center justify-center gap-2 rounded-md border border-confidence/40 bg-confidence/10 text-sm text-confidence transition hover:bg-confidence/20 disabled:opacity-50"
           disabled={!canApprove || disabled}
           onClick={() => onApprove(action)}
           type="button"
@@ -165,7 +165,7 @@ export function ApprovalPanel({
           Approve
         </button>
         <button
-          className="inline-flex h-10 items-center justify-center gap-2 border border-risk/40 bg-risk/10 text-sm text-risk transition hover:bg-risk/20 disabled:opacity-50"
+          className="interactive-card inline-flex h-10 items-center justify-center gap-2 rounded-md border border-risk/40 bg-risk/10 text-sm text-risk transition hover:bg-risk/20 disabled:opacity-50"
           disabled={!canReject || disabled}
           onClick={() => onReject(action)}
           type="button"
