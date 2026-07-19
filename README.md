@@ -1,7 +1,8 @@
 # Organizational Reasoning Engine
 
 ORE is the Organizational Reasoning Engine implementation defined by the frozen design documents.
-The current implementation includes the project foundation, canonical data model, and seeded demo organization.
+The current MVP is frozen for hackathon demo validation.
+It demonstrates the pre-merge organizational reasoning workflow for `checkout-api` PR #482.
 
 ## Stack
 
@@ -27,6 +28,27 @@ docker compose up --build
 The frontend runs at `http://localhost:3000`.
 The backend health endpoint runs at `http://localhost:8000/health`.
 Neo4j Browser runs at `http://localhost:7474`.
+
+## Release Demo Reset
+
+Reset and preload the full demo from the repository root:
+
+```bash
+python3 reset_demo.py
+```
+
+The reset command runs inside the Docker backend by default.
+It clears the seeded organization, reseeds canonical demo data, syncs Neo4j, runs the reasoning engine, generates suggested actions, and preloads one approved Codex artifact for the Execution Center.
+
+For local backend development without Docker Compose, run:
+
+```bash
+python3 reset_demo.py --local
+```
+
+Local mode uses a compatible local Python environment only when the backend dependencies are available.
+If they are not available, the command falls back to Docker Compose.
+Use local mode only when PostgreSQL and Neo4j are reachable from the host using the values in `.env.example` or `.env`.
 
 ## Demo Seed
 
@@ -110,3 +132,46 @@ curl http://localhost:8000/organization?organization_id=org-demo-apex
 ```
 
 The dashboard combines organization health, knowledge score, recent PRs, recent reasoning, predictions, recent activity, pending execution, and a Neo4j-backed graph preview.
+
+## Demo Flow
+
+1. Open `http://localhost:3000`.
+2. Confirm Dashboard shows Apex Demo Organization, recent reasoning, recent predictions, and the graph preview.
+3. Open Evidence to inspect the eight seeded evidence records.
+4. Open Graph to inspect the interactive Neo4j-backed organizational graph.
+5. Open Reasoning to watch the evidence-backed reasoning timeline.
+6. Open Impact to review affected services, risk timeline, confidence, and evidence.
+7. Open Actions to review generated actions and the approval controls.
+8. Open Execution to inspect the generated Codex artifact and logs.
+
+The canonical hero change is `Route express checkout authorization through risk scoring`.
+It is represented by `reasoning-demo-pr-482`, `pr-checkout-api-482`, and `entity-pr-checkout-482`.
+
+## Release Smoke Checks
+
+Run backend checks:
+
+```bash
+cd backend
+python3 -m compileall app
+../backend/.venv/bin/ruff check app migrations
+../backend/.venv/bin/black --check app migrations
+```
+
+Run frontend checks:
+
+```bash
+cd frontend
+npm run format
+npm run lint
+npm run build
+```
+
+Run Docker checks:
+
+```bash
+docker compose up -d --build
+docker compose ps
+curl http://localhost:8000/health
+curl -I http://localhost:3000
+```
