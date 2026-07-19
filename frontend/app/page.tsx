@@ -570,7 +570,12 @@ export default function Home() {
           <ReasoningProgress steps={reasoningLoadSteps} />
         ) : (
           <div key={activeView} className="screen-enter min-h-0 flex-1 py-6">
-            {activeView === "dashboard" && <Dashboard dashboard={dashboard} />}
+            {activeView === "dashboard" && (
+              <Dashboard
+                dashboard={dashboard}
+                onAnalyzePullRequest={() => setActiveView("reasoning")}
+              />
+            )}
             {activeView === "evidence" && (
               <EvidenceExplorer evidence={evidence} />
             )}
@@ -843,7 +848,7 @@ function ReasoningWorkspace({
 
   return (
     <div className="grid min-h-[calc(100vh-190px)] grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
-      <section className="min-h-0 border border-border bg-background p-4 sm:p-5">
+      <section className="flex min-h-0 flex-col border border-border bg-background p-4 sm:p-5 xl:[contain:size]">
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold">

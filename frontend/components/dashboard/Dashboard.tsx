@@ -3,6 +3,7 @@ import { Activity, GitPullRequest } from "lucide-react";
 import { GraphPreview } from "./GraphPreview";
 import { OrganizationCard } from "./OrganizationCard";
 import { RecentReasoning } from "./RecentReasoning";
+import { Button } from "../ui/button";
 
 export type DashboardData = {
   organization: {
@@ -99,7 +100,13 @@ export type GraphPreviewEdge = {
   strength: string;
 };
 
-export function Dashboard({ dashboard }: { dashboard: DashboardData | null }) {
+export function Dashboard({
+  dashboard,
+  onAnalyzePullRequest,
+}: {
+  dashboard: DashboardData | null;
+  onAnalyzePullRequest: () => void;
+}) {
   if (!dashboard) {
     return (
       <div className="polished-panel grid min-h-[420px] place-items-center border text-sm text-muted-foreground">
@@ -121,7 +128,10 @@ export function Dashboard({ dashboard }: { dashboard: DashboardData | null }) {
           <GraphPreview graph={dashboard.graph_preview} />
         </div>
         <aside className="space-y-5">
-          <PullRequestPanel pullRequests={dashboard.recent_pull_requests} />
+          <PullRequestPanel
+            onAnalyzePullRequest={onAnalyzePullRequest}
+            pullRequests={dashboard.recent_pull_requests}
+          />
           <ActivityPanel activity={dashboard.recent_activity} />
         </aside>
       </div>
@@ -131,8 +141,10 @@ export function Dashboard({ dashboard }: { dashboard: DashboardData | null }) {
 
 function PullRequestPanel({
   pullRequests,
+  onAnalyzePullRequest,
 }: {
   pullRequests: RecentPullRequest[];
+  onAnalyzePullRequest: () => void;
 }) {
   return (
     <section className="polished-panel border p-5">
@@ -151,6 +163,13 @@ function PullRequestPanel({
               <span>{pullRequest.repository}</span>
               <span className="capitalize">{pullRequest.status}</span>
             </div>
+            <Button
+              className="mt-3 h-8 w-full px-3 text-xs"
+              onClick={onAnalyzePullRequest}
+              type="button"
+            >
+              Analyze PR
+            </Button>
           </article>
         ))}
       </div>

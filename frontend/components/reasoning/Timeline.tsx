@@ -69,7 +69,7 @@ export function Timeline({
       : Math.round((visibleCount / orderedStages.length) * 100);
 
   return (
-    <div className="h-[calc(100vh-250px)] overflow-y-auto pr-2">
+    <div className="min-h-0 flex-1 overflow-y-auto pr-2">
       <div className="sticky top-0 z-10 mb-4 border border-border bg-background/95 p-3 backdrop-blur">
         <div className="flex items-center justify-between gap-4 text-xs">
           <span className="font-semibold text-foreground">
