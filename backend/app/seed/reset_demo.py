@@ -17,7 +17,13 @@ from app.services.organizational_graph import OrganizationalGraphService
 from app.services.reasoning_engine import ReasoningEngineService
 
 REASONING_SESSION_ID = "reasoning-demo-pr-482"
-PRELOADED_ACTION_ID = "action-reasoning-demo-pr-482-documentation-update"
+PRELOADED_ACTION_IDS = [
+    "action-reasoning-demo-pr-482-documentation-update",
+    "action-reasoning-demo-pr-482-architecture-update",
+    "action-reasoning-demo-pr-482-reviewer-assignment",
+    "action-reasoning-demo-pr-482-slack-draft",
+    "action-reasoning-demo-pr-482-migration-checklist",
+]
 
 
 def reset_demo(session: Session) -> dict[str, Any]:
@@ -40,9 +46,12 @@ def reset_demo(session: Session) -> dict[str, Any]:
         reasoning_session_id=REASONING_SESSION_ID,
         force=True,
     )
-    approved_action = ActionService(session).approve_action(action_id=PRELOADED_ACTION_ID)
+    action_service = ActionService(session)
+    approved_actions = [
+        action_service.approve_action(action_id=action_id) for action_id in PRELOADED_ACTION_IDS
+    ]
     execution = ExecutionService(session).get_execution(
-        execution_id=f"execution-{PRELOADED_ACTION_ID}",
+        execution_id=f"execution-{PRELOADED_ACTION_IDS[0]}",
         organization_id=DEMO_ORGANIZATION_ID,
     )
 
@@ -62,8 +71,8 @@ def reset_demo(session: Session) -> dict[str, Any]:
         },
         "actions": {
             "generated": len(action_plan.actions),
-            "preloaded_approved_action_id": approved_action.id,
-            "preloaded_approved_status": approved_action.status,
+            "preloaded_approved_action_ids": [action.id for action in approved_actions],
+            "preloaded_approved_statuses": [action.status for action in approved_actions],
         },
         "execution": {
             "id": execution.id,

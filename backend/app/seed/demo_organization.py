@@ -91,8 +91,11 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
         Organization,
         {
             "id": DEMO_ORGANIZATION_ID,
-            "name": "Apex Demo Organization",
-            "description": "Seeded organization for ORE demo reasoning workflows.",
+            "name": "Meridian Commerce",
+            "description": (
+                "Technology company operating a high-volume commerce platform with "
+                "shared checkout, identity, and reliability services."
+            ),
             "status": "active",
             "extra_metadata": {
                 "demo": True,
@@ -108,8 +111,8 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "id": "entity-org-apex",
                 "organization_id": organization.id,
                 "entity_type": "organization",
-                "display_name": "Apex Demo Organization",
-                "description": "The demo organization represented in ORE.",
+                "display_name": "Meridian Commerce",
+                "description": "The commerce technology organization represented in ORE.",
                 "status": "active",
                 "extra_metadata": {"demo": True},
             },
@@ -156,7 +159,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Maya Chen",
                 "description": "Staff engineer with checkout and platform review context.",
                 "status": "active",
-                "extra_metadata": {"email": "maya.chen@example.com"},
+                "extra_metadata": {"email": "maya.chen@meridiancommerce.com"},
             },
             {
                 "id": "entity-person-eli",
@@ -165,7 +168,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Eli Rivera",
                 "description": "Payments engineer authoring the checkout migration PR.",
                 "status": "active",
-                "extra_metadata": {"email": "eli.rivera@example.com"},
+                "extra_metadata": {"email": "eli.rivera@meridiancommerce.com"},
             },
             {
                 "id": "entity-person-sam",
@@ -174,7 +177,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Sam Patel",
                 "description": "Growth engineer responsible for storefront integration.",
                 "status": "active",
-                "extra_metadata": {"email": "sam.patel@example.com"},
+                "extra_metadata": {"email": "sam.patel@meridiancommerce.com"},
             },
             {
                 "id": "entity-person-zoe",
@@ -183,7 +186,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Zoe Kim",
                 "description": "SRE lead for checkout observability and incident response.",
                 "status": "active",
-                "extra_metadata": {"email": "zoe.kim@example.com"},
+                "extra_metadata": {"email": "zoe.kim@meridiancommerce.com"},
             },
             {
                 "id": "entity-person-ina",
@@ -192,7 +195,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Ina Okafor",
                 "description": "Identity service maintainer and reviewer.",
                 "status": "active",
-                "extra_metadata": {"email": "ina.okafor@example.com"},
+                "extra_metadata": {"email": "ina.okafor@meridiancommerce.com"},
             },
             {
                 "id": "entity-person-noah",
@@ -201,7 +204,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Noah Singh",
                 "description": "Risk engine maintainer and payment rules reviewer.",
                 "status": "active",
-                "extra_metadata": {"email": "noah.singh@example.com"},
+                "extra_metadata": {"email": "noah.singh@meridiancommerce.com"},
             },
             {
                 "id": "entity-repo-checkout-api",
@@ -291,7 +294,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "RFC-104 Checkout Routing Migration",
                 "description": "Architecture proposal for routing checkout through risk scoring.",
                 "status": "active",
-                "extra_metadata": {"document_url": "https://docs.example.com/rfc-104"},
+                "extra_metadata": {"document_url": "https://docs.meridiancommerce.com/rfc-104"},
             },
             {
                 "id": "entity-runbook-checkout",
@@ -300,7 +303,9 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "display_name": "Checkout Incident Runbook",
                 "description": "Operational runbook for checkout latency and failure incidents.",
                 "status": "active",
-                "extra_metadata": {"document_url": "https://docs.example.com/runbooks/checkout"},
+                "extra_metadata": {
+                    "document_url": "https://docs.meridiancommerce.com/runbooks/checkout"
+                },
             },
             {
                 "id": "entity-incident-checkout-latency",
@@ -329,6 +334,198 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "status": "active",
                 "extra_metadata": {"number": 482, "repository": "checkout-api"},
             },
+            {
+                "id": "entity-team-security",
+                "organization_id": organization.id,
+                "entity_type": "team",
+                "display_name": "Security Engineering",
+                "description": "Owns authentication posture and checkout threat controls.",
+                "status": "active",
+                "extra_metadata": {"slack_channel": "#security-engineering"},
+            },
+            {
+                "id": "entity-service-payment-routing",
+                "organization_id": organization.id,
+                "entity_type": "service",
+                "display_name": "Payment Routing Service",
+                "description": "Selects authorization paths and gateway fallbacks for checkout.",
+                "status": "active",
+                "extra_metadata": {"tier": "1", "pager": "payments-primary"},
+            },
+            {
+                "id": "entity-service-session",
+                "organization_id": organization.id,
+                "entity_type": "service",
+                "display_name": "Session Service",
+                "description": "Maintains authenticated customer sessions used by checkout.",
+                "status": "active",
+                "extra_metadata": {"tier": "1", "pager": "platform-primary"},
+            },
+            {
+                "id": "entity-service-experiment",
+                "organization_id": organization.id,
+                "entity_type": "service",
+                "display_name": "Experiment Platform",
+                "description": "Coordinates staged feature-flag exposure for storefront releases.",
+                "status": "active",
+                "extra_metadata": {"tier": "2", "pager": "growth-primary"},
+            },
+            {
+                "id": "entity-service-notifications",
+                "organization_id": organization.id,
+                "entity_type": "service",
+                "display_name": "Notification Service",
+                "description": "Delivers checkout receipts and operational customer notifications.",
+                "status": "active",
+                "extra_metadata": {"tier": "2", "pager": "platform-primary"},
+            },
+            {
+                "id": "entity-feature-graceful-fallback",
+                "organization_id": organization.id,
+                "entity_type": "feature",
+                "display_name": "Checkout Graceful Fallback",
+                "description": "Preserves standard checkout when risk scoring exceeds its budget.",
+                "status": "active",
+                "extra_metadata": {"launch_stage": "limited"},
+            },
+            {
+                "id": "entity-rfc-feature-rollout",
+                "organization_id": organization.id,
+                "entity_type": "rfc",
+                "display_name": "RFC-118 Express Checkout Rollout Controls",
+                "description": "Defines exposure sequencing and guardrails for express checkout.",
+                "status": "active",
+                "extra_metadata": {"document_url": "https://docs.meridiancommerce.com/rfc-118"},
+            },
+            {
+                "id": "entity-runbook-identity",
+                "organization_id": organization.id,
+                "entity_type": "runbook",
+                "display_name": "Identity Latency Runbook",
+                "description": "Operational response guide for elevated authentication latency.",
+                "status": "active",
+                "extra_metadata": {
+                    "document_url": "https://docs.meridiancommerce.com/runbooks/identity-latency"
+                },
+            },
+            {
+                "id": "entity-incident-auth-latency",
+                "organization_id": organization.id,
+                "entity_type": "incident",
+                "display_name": "Elevated Authentication Latency",
+                "description": "Identity token issuance slowed during a checkout traffic peak.",
+                "status": "active",
+                "extra_metadata": {"incident_key": "INC-2026-0708"},
+            },
+            {
+                "id": "entity-incident-risk-degradation",
+                "organization_id": organization.id,
+                "entity_type": "incident",
+                "display_name": "Risk Scoring Degradation",
+                "description": "Risk decision latency exceeded the checkout timeout budget.",
+                "status": "active",
+                "extra_metadata": {"incident_key": "INC-2026-0710"},
+            },
+            {
+                "id": "entity-incident-routing-rollback",
+                "organization_id": organization.id,
+                "entity_type": "incident",
+                "display_name": "Payment Routing Rollback",
+                "description": (
+                    "A gateway-routing release was rolled back after elevated "
+                    "authorization failures."
+                ),
+                "status": "active",
+                "extra_metadata": {"incident_key": "INC-2026-0715"},
+            },
+            {
+                "id": "entity-incident-flag-exposure",
+                "organization_id": organization.id,
+                "entity_type": "incident",
+                "display_name": "Express Checkout Flag Exposure",
+                "description": (
+                    "An experiment audience was narrowed after inconsistent " "fallback behavior."
+                ),
+                "status": "active",
+                "extra_metadata": {"incident_key": "INC-2026-0716"},
+            },
+            {
+                "id": "entity-incident-webhook-backlog",
+                "organization_id": organization.id,
+                "entity_type": "incident",
+                "display_name": "Payment Webhook Backlog",
+                "description": (
+                    "Gateway webhook retries delayed receipt reconciliation for a "
+                    "subset of orders."
+                ),
+                "status": "active",
+                "extra_metadata": {"incident_key": "INC-2026-0718"},
+            },
+            {
+                "id": "entity-deployment-identity",
+                "organization_id": organization.id,
+                "entity_type": "deployment",
+                "display_name": "Identity Service 2026-07-15 Deployment",
+                "description": "Deployment that added session trust-claim budget telemetry.",
+                "status": "active",
+                "extra_metadata": {"environment": "production"},
+            },
+            {
+                "id": "entity-deployment-storefront",
+                "organization_id": organization.id,
+                "entity_type": "deployment",
+                "display_name": "Storefront 2026-07-16 Deployment",
+                "description": "Deployment that introduced a staged express checkout audience.",
+                "status": "active",
+                "extra_metadata": {"environment": "production"},
+            },
+            {
+                "id": "entity-pr-storefront-271",
+                "organization_id": organization.id,
+                "entity_type": "pull_request",
+                "display_name": "storefront-web PR #271",
+                "description": (
+                    "Introduces the express checkout experiment flag and analytics events."
+                ),
+                "status": "active",
+                "extra_metadata": {"number": 271, "repository": "storefront-web"},
+            },
+            {
+                "id": "entity-pr-identity-133",
+                "organization_id": organization.id,
+                "entity_type": "pull_request",
+                "display_name": "identity-service PR #133",
+                "description": "Exposes session trust claims for checkout risk scoring.",
+                "status": "active",
+                "extra_metadata": {"number": 133, "repository": "identity-service"},
+            },
+            {
+                "id": "entity-pr-storefront-287",
+                "organization_id": organization.id,
+                "entity_type": "pull_request",
+                "display_name": "storefront-web PR #287",
+                "description": "Aligns the storefront fallback state with checkout API responses.",
+                "status": "active",
+                "extra_metadata": {"number": 287, "repository": "storefront-web"},
+            },
+            {
+                "id": "entity-pr-identity-204",
+                "organization_id": organization.id,
+                "entity_type": "pull_request",
+                "display_name": "identity-service PR #204",
+                "description": "Adds request-budget telemetry to checkout trust claims.",
+                "status": "active",
+                "extra_metadata": {"number": 204, "repository": "identity-service"},
+            },
+            {
+                "id": "entity-pr-observability-96",
+                "organization_id": organization.id,
+                "entity_type": "pull_request",
+                "display_name": "observability-config PR #96",
+                "description": "Adds SLO alerts for checkout risk timeout and fallback rates.",
+                "status": "active",
+                "extra_metadata": {"number": 96, "repository": "observability-config"},
+            },
         ]
     }
 
@@ -339,7 +536,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "id": "repo-checkout-api",
                 "organization_id": organization.id,
                 "name": "checkout-api",
-                "url": "https://github.com/apex-demo/checkout-api",
+                "url": "https://github.com/meridian-commerce/checkout-api",
                 "default_branch": "main",
                 "status": "active",
                 "extra_metadata": {"entity_id": "entity-repo-checkout-api"},
@@ -348,7 +545,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "id": "repo-identity-service",
                 "organization_id": organization.id,
                 "name": "identity-service",
-                "url": "https://github.com/apex-demo/identity-service",
+                "url": "https://github.com/meridian-commerce/identity-service",
                 "default_branch": "main",
                 "status": "active",
                 "extra_metadata": {"entity_id": "entity-repo-identity"},
@@ -357,7 +554,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "id": "repo-storefront-web",
                 "organization_id": organization.id,
                 "name": "storefront-web",
-                "url": "https://github.com/apex-demo/storefront-web",
+                "url": "https://github.com/meridian-commerce/storefront-web",
                 "default_branch": "main",
                 "status": "active",
                 "extra_metadata": {"entity_id": "entity-repo-webapp"},
@@ -366,10 +563,136 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "id": "repo-observability-config",
                 "organization_id": organization.id,
                 "name": "observability-config",
-                "url": "https://github.com/apex-demo/observability-config",
+                "url": "https://github.com/meridian-commerce/observability-config",
                 "default_branch": "main",
                 "status": "active",
                 "extra_metadata": {"entity_id": "entity-repo-observability"},
+            },
+            {
+                "id": "repo-payment-routing",
+                "organization_id": organization.id,
+                "name": "payment-routing",
+                "url": "https://github.com/meridian-commerce/payment-routing",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "payments"},
+            },
+            {
+                "id": "repo-risk-engine",
+                "organization_id": organization.id,
+                "name": "risk-engine",
+                "url": "https://github.com/meridian-commerce/risk-engine",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "payments"},
+            },
+            {
+                "id": "repo-session-service",
+                "organization_id": organization.id,
+                "name": "session-service",
+                "url": "https://github.com/meridian-commerce/session-service",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "platform"},
+            },
+            {
+                "id": "repo-feature-flags",
+                "organization_id": organization.id,
+                "name": "feature-flags",
+                "url": "https://github.com/meridian-commerce/feature-flags",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "growth"},
+            },
+            {
+                "id": "repo-merchant-config",
+                "organization_id": organization.id,
+                "name": "merchant-config",
+                "url": "https://github.com/meridian-commerce/merchant-config",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "payments"},
+            },
+            {
+                "id": "repo-tax-service",
+                "organization_id": organization.id,
+                "name": "tax-service",
+                "url": "https://github.com/meridian-commerce/tax-service",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "commerce"},
+            },
+            {
+                "id": "repo-order-service",
+                "organization_id": organization.id,
+                "name": "order-service",
+                "url": "https://github.com/meridian-commerce/order-service",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "commerce"},
+            },
+            {
+                "id": "repo-notification-service",
+                "organization_id": organization.id,
+                "name": "notification-service",
+                "url": "https://github.com/meridian-commerce/notification-service",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "platform"},
+            },
+            {
+                "id": "repo-customer-profile",
+                "organization_id": organization.id,
+                "name": "customer-profile",
+                "url": "https://github.com/meridian-commerce/customer-profile",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "platform"},
+            },
+            {
+                "id": "repo-event-pipeline",
+                "organization_id": organization.id,
+                "name": "event-pipeline",
+                "url": "https://github.com/meridian-commerce/event-pipeline",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "data-platform"},
+            },
+            {
+                "id": "repo-deployment-templates",
+                "organization_id": organization.id,
+                "name": "deployment-templates",
+                "url": "https://github.com/meridian-commerce/deployment-templates",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "sre"},
+            },
+            {
+                "id": "repo-incident-automation",
+                "organization_id": organization.id,
+                "name": "incident-automation",
+                "url": "https://github.com/meridian-commerce/incident-automation",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "sre"},
+            },
+            {
+                "id": "repo-platform-sdk",
+                "organization_id": organization.id,
+                "name": "platform-sdk",
+                "url": "https://github.com/meridian-commerce/platform-sdk",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "platform"},
+            },
+            {
+                "id": "repo-shared-contracts",
+                "organization_id": organization.id,
+                "name": "shared-contracts",
+                "url": "https://github.com/meridian-commerce/shared-contracts",
+                "default_branch": "main",
+                "status": "active",
+                "extra_metadata": {"domain": "platform"},
             },
         ]
     }
@@ -382,7 +705,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "organization_id": organization.id,
                 "team_entity_id": "entity-team-platform",
                 "name": "Maya Chen",
-                "email": "maya.chen@example.com",
+                "email": "maya.chen@meridiancommerce.com",
                 "role": "Staff Engineer",
                 "extra_metadata": {"entity_id": "entity-person-maya"},
             },
@@ -391,7 +714,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "organization_id": organization.id,
                 "team_entity_id": "entity-team-payments",
                 "name": "Eli Rivera",
-                "email": "eli.rivera@example.com",
+                "email": "eli.rivera@meridiancommerce.com",
                 "role": "Senior Software Engineer",
                 "extra_metadata": {"entity_id": "entity-person-eli"},
             },
@@ -400,7 +723,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "organization_id": organization.id,
                 "team_entity_id": "entity-team-growth",
                 "name": "Sam Patel",
-                "email": "sam.patel@example.com",
+                "email": "sam.patel@meridiancommerce.com",
                 "role": "Frontend Engineer",
                 "extra_metadata": {"entity_id": "entity-person-sam"},
             },
@@ -409,7 +732,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "organization_id": organization.id,
                 "team_entity_id": "entity-team-sre",
                 "name": "Zoe Kim",
-                "email": "zoe.kim@example.com",
+                "email": "zoe.kim@meridiancommerce.com",
                 "role": "SRE Lead",
                 "extra_metadata": {"entity_id": "entity-person-zoe"},
             },
@@ -418,7 +741,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "organization_id": organization.id,
                 "team_entity_id": "entity-team-platform",
                 "name": "Ina Okafor",
-                "email": "ina.okafor@example.com",
+                "email": "ina.okafor@meridiancommerce.com",
                 "role": "Service Owner",
                 "extra_metadata": {"entity_id": "entity-person-ina"},
             },
@@ -427,7 +750,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "organization_id": organization.id,
                 "team_entity_id": "entity-team-payments",
                 "name": "Noah Singh",
-                "email": "noah.singh@example.com",
+                "email": "noah.singh@meridiancommerce.com",
                 "role": "Risk Engineer",
                 "extra_metadata": {"entity_id": "entity-person-noah"},
             },
@@ -452,7 +775,10 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "target_branch": "main",
                 "extra_metadata": {
                     "entity_id": "entity-pr-checkout-482",
-                    "reviewers": ["maya.chen@example.com", "noah.singh@example.com"],
+                    "reviewers": [
+                        "maya.chen@meridiancommerce.com",
+                        "noah.singh@meridiancommerce.com",
+                    ],
                     "risk": "Touches checkout, risk, and identity request path.",
                 },
                 "merged_at": None,
@@ -485,6 +811,57 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "extra_metadata": {"linked_pull_request_id": "pr-checkout-api-482"},
                 "merged_at": None,
             },
+            {
+                "id": "pr-storefront-web-287",
+                "organization_id": organization.id,
+                "repository_id": repositories["repo-storefront-web"].id,
+                "author_id": users["user-sam"].id,
+                "number": 287,
+                "title": "Align express checkout fallback state with checkout API",
+                "description": (
+                    "Keeps the storefront experience on standard checkout when the "
+                    "risk-scored route returns its fallback response."
+                ),
+                "status": "open",
+                "source_branch": "sam/express-checkout-fallback-state",
+                "target_branch": "main",
+                "extra_metadata": {"linked_pull_request_id": "pr-checkout-api-482"},
+                "merged_at": None,
+            },
+            {
+                "id": "pr-identity-service-204",
+                "organization_id": organization.id,
+                "repository_id": repositories["repo-identity-service"].id,
+                "author_id": users["user-ina"].id,
+                "number": 204,
+                "title": "Add request budget telemetry to checkout trust claims",
+                "description": (
+                    "Adds latency and timeout-budget telemetry for trust claims consumed "
+                    "by the checkout request path."
+                ),
+                "status": "merged",
+                "source_branch": "ina/trust-claim-budget-telemetry",
+                "target_branch": "main",
+                "extra_metadata": {"service": "identity-service"},
+                "merged_at": _ts(15, 16, 45),
+            },
+            {
+                "id": "pr-observability-config-96",
+                "organization_id": organization.id,
+                "repository_id": repositories["repo-observability-config"].id,
+                "author_id": users["user-zoe"].id,
+                "number": 96,
+                "title": "Add checkout risk timeout SLO alerts",
+                "description": (
+                    "Adds SLO alerts and a rollout dashboard for risk timeouts and "
+                    "checkout fallback rates."
+                ),
+                "status": "merged",
+                "source_branch": "zoe/checkout-risk-timeout-slo",
+                "target_branch": "main",
+                "extra_metadata": {"service": "checkout-api"},
+                "merged_at": _ts(16, 9, 30),
+            },
         ]
     }
 
@@ -497,7 +874,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "author_id": users["user-eli"].id,
                 "evidence_type": "pull_request",
                 "source": "github",
-                "source_reference": "apex-demo/checkout-api#482",
+                "source_reference": "meridian-commerce/checkout-api#482",
                 "title": "PR #482 routes express checkout through risk scoring",
                 "summary": (
                     "The pull request moves express checkout authorization behind "
@@ -602,7 +979,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "author_id": users["user-sam"].id,
                 "evidence_type": "pull_request",
                 "source": "github",
-                "source_reference": "apex-demo/storefront-web#271",
+                "source_reference": "meridian-commerce/storefront-web#271",
                 "title": "Storefront express checkout feature flag",
                 "summary": (
                     "The merged storefront PR introduced an experiment flag that "
@@ -610,6 +987,293 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 ),
                 "timestamp": _ts(10, 15, 30),
                 "extra_metadata": {"pull_request_id": pull_requests["pr-storefront-web-271"].id},
+            },
+            {
+                "id": "evidence-pr-identity-133",
+                "organization_id": organization.id,
+                "author_id": users["user-ina"].id,
+                "evidence_type": "pull_request",
+                "source": "github",
+                "source_reference": "meridian-commerce/identity-service#133",
+                "title": "PR #133 exposes session trust claims for checkout",
+                "summary": (
+                    "The identity change exposes the trust claims required by risk "
+                    "scoring before express checkout authorization."
+                ),
+                "timestamp": _ts(15, 10, 5),
+                "extra_metadata": {"pull_request_id": pull_requests["pr-identity-service-133"].id},
+            },
+            {
+                "id": "evidence-pr-storefront-287",
+                "organization_id": organization.id,
+                "author_id": users["user-sam"].id,
+                "evidence_type": "pull_request",
+                "source": "github",
+                "source_reference": "meridian-commerce/storefront-web#287",
+                "title": "PR #287 aligns the express checkout fallback state",
+                "summary": (
+                    "The storefront preserves the standard checkout journey whenever "
+                    "the checkout API returns a risk-scoring fallback response."
+                ),
+                "timestamp": _ts(17, 11, 20),
+                "extra_metadata": {"pull_request_id": pull_requests["pr-storefront-web-287"].id},
+            },
+            {
+                "id": "evidence-pr-identity-204",
+                "organization_id": organization.id,
+                "author_id": users["user-ina"].id,
+                "evidence_type": "pull_request",
+                "source": "github",
+                "source_reference": "meridian-commerce/identity-service#204",
+                "title": "PR #204 adds trust-claim request budget telemetry",
+                "summary": (
+                    "The merged change records identity latency and timeout budgets "
+                    "for the request path used by checkout risk scoring."
+                ),
+                "timestamp": _ts(15, 16, 45),
+                "extra_metadata": {"pull_request_id": pull_requests["pr-identity-service-204"].id},
+            },
+            {
+                "id": "evidence-pr-observability-96",
+                "organization_id": organization.id,
+                "author_id": users["user-zoe"].id,
+                "evidence_type": "pull_request",
+                "source": "github",
+                "source_reference": "meridian-commerce/observability-config#96",
+                "title": "PR #96 adds checkout risk timeout SLO alerts",
+                "summary": (
+                    "The merged alerting update adds a dashboard for risk timeouts, "
+                    "checkout fallback rate, and rollout guardrails."
+                ),
+                "timestamp": _ts(16, 9, 30),
+                "extra_metadata": {
+                    "pull_request_id": pull_requests["pr-observability-config-96"].id
+                },
+            },
+            {
+                "id": "evidence-incident-auth-latency",
+                "organization_id": organization.id,
+                "author_id": users["user-zoe"].id,
+                "evidence_type": "incident",
+                "source": "incident_management",
+                "source_reference": "INC-2026-0708",
+                "title": "Elevated authentication latency during checkout peak",
+                "summary": (
+                    "Identity token issuance exceeded its service budget during a "
+                    "traffic peak, increasing checkout session validation time."
+                ),
+                "timestamp": _ts(8, 19, 10),
+                "extra_metadata": {"severity": "sev2", "service": "identity-service"},
+            },
+            {
+                "id": "evidence-incident-risk-degradation",
+                "organization_id": organization.id,
+                "author_id": users["user-noah"].id,
+                "evidence_type": "incident",
+                "source": "incident_management",
+                "source_reference": "INC-2026-0710",
+                "title": "Risk scoring degradation delayed payment authorization",
+                "summary": (
+                    "A model dependency slowdown pushed risk decisions beyond the "
+                    "checkout timeout budget and increased fallback traffic."
+                ),
+                "timestamp": _ts(10, 14, 40),
+                "extra_metadata": {"severity": "sev2", "service": "risk-engine"},
+            },
+            {
+                "id": "evidence-incident-routing-rollback",
+                "organization_id": organization.id,
+                "author_id": users["user-eli"].id,
+                "evidence_type": "incident",
+                "source": "incident_management",
+                "source_reference": "INC-2026-0715",
+                "title": "Payment routing rollback after authorization failures",
+                "summary": (
+                    "Payments rolled back a routing change after a gateway fallback "
+                    "path produced elevated authorization failures for one region."
+                ),
+                "timestamp": _ts(15, 18, 5),
+                "extra_metadata": {"severity": "sev2", "service": "payment-routing"},
+            },
+            {
+                "id": "evidence-incident-flag-exposure",
+                "organization_id": organization.id,
+                "author_id": users["user-sam"].id,
+                "evidence_type": "incident",
+                "source": "incident_management",
+                "source_reference": "INC-2026-0716",
+                "title": "Express checkout rollout paused after fallback mismatch",
+                "summary": (
+                    "Growth narrowed the experiment audience while the storefront and "
+                    "checkout fallback states were brought back into alignment."
+                ),
+                "timestamp": _ts(16, 13, 25),
+                "extra_metadata": {"severity": "sev3", "service": "storefront-web"},
+            },
+            {
+                "id": "evidence-incident-webhook-backlog",
+                "organization_id": organization.id,
+                "author_id": users["user-zoe"].id,
+                "evidence_type": "incident",
+                "source": "incident_management",
+                "source_reference": "INC-2026-0718",
+                "title": "Payment webhook backlog delayed receipt reconciliation",
+                "summary": (
+                    "Retry volume from the gateway created a short reconciliation "
+                    "backlog, delaying receipts for a limited group of orders."
+                ),
+                "timestamp": _ts(18, 8, 50),
+                "extra_metadata": {"severity": "sev3", "service": "notification-service"},
+            },
+            {
+                "id": "evidence-slack-rollout-coordination",
+                "organization_id": organization.id,
+                "author_id": users["user-eli"].id,
+                "evidence_type": "slack_discussion",
+                "source": "slack",
+                "source_reference": "#payments/2026-07-16-express-checkout-rollout",
+                "title": "Payments coordinates the express checkout rollout window",
+                "summary": (
+                    "Payments confirmed a staged rollout after the identity telemetry "
+                    "deployment and requested SRE coverage for the first expansion."
+                ),
+                "timestamp": _ts(16, 10, 30),
+                "extra_metadata": {"channel": "#payments"},
+            },
+            {
+                "id": "evidence-slack-reviewer-coverage",
+                "organization_id": organization.id,
+                "author_id": users["user-maya"].id,
+                "evidence_type": "slack_discussion",
+                "source": "slack",
+                "source_reference": "#platform/2026-07-16-checkout-reviewers",
+                "title": "Platform confirms reviewer coverage for trust-claim changes",
+                "summary": (
+                    "Maya and Ina agreed that identity changes affecting checkout "
+                    "should receive Platform review before the rollout is widened."
+                ),
+                "timestamp": _ts(16, 12, 15),
+                "extra_metadata": {"channel": "#platform"},
+            },
+            {
+                "id": "evidence-slack-deployment-plan",
+                "organization_id": organization.id,
+                "author_id": users["user-zoe"].id,
+                "evidence_type": "slack_discussion",
+                "source": "slack",
+                "source_reference": "#sre/2026-07-17-checkout-guardrails",
+                "title": "SRE documents deployment guardrails for checkout rollout",
+                "summary": (
+                    "SRE requested a one-percent audience step, live fallback-rate "
+                    "monitoring, and a named rollback owner before deployment."
+                ),
+                "timestamp": _ts(17, 9, 40),
+                "extra_metadata": {"channel": "#sre"},
+            },
+            {
+                "id": "evidence-slack-incident-follow-up",
+                "organization_id": organization.id,
+                "author_id": users["user-noah"].id,
+                "evidence_type": "slack_discussion",
+                "source": "slack",
+                "source_reference": "#payments/2026-07-18-risk-incident-followup",
+                "title": "Risk maintainers close the timeout incident follow-up",
+                "summary": (
+                    "Risk maintainers confirmed the mitigation is in place and asked "
+                    "for the timeout budget to remain explicit in the rollout plan."
+                ),
+                "timestamp": _ts(18, 11, 5),
+                "extra_metadata": {"channel": "#payments"},
+            },
+            {
+                "id": "evidence-slack-architecture-decision",
+                "organization_id": organization.id,
+                "author_id": users["user-maya"].id,
+                "evidence_type": "slack_discussion",
+                "source": "slack",
+                "source_reference": "#platform/2026-07-18-checkout-fallback-design",
+                "title": "Architecture discussion confirms the checkout fallback contract",
+                "summary": (
+                    "Platform and Payments agreed that a risk timeout returns the "
+                    "standard checkout contract rather than an authorization error."
+                ),
+                "timestamp": _ts(18, 15, 20),
+                "extra_metadata": {"channel": "#platform"},
+            },
+            {
+                "id": "evidence-ownership-risk-engine",
+                "organization_id": organization.id,
+                "author_id": users["user-noah"].id,
+                "evidence_type": "ownership_metadata",
+                "source": "catalog",
+                "source_reference": "services/risk-engine",
+                "title": "Risk Engine ownership and escalation metadata",
+                "summary": (
+                    "The service catalog lists Payments as the accountable team, "
+                    "Noah Singh as technical owner, and payments-primary for escalation."
+                ),
+                "timestamp": _ts(17, 8, 30),
+                "extra_metadata": {"tier": "1", "pager": "payments-primary"},
+            },
+            {
+                "id": "evidence-ownership-identity",
+                "organization_id": organization.id,
+                "author_id": users["user-ina"].id,
+                "evidence_type": "ownership_metadata",
+                "source": "catalog",
+                "source_reference": "services/identity-service",
+                "title": "Identity Service ownership and on-call metadata",
+                "summary": (
+                    "The catalog assigns Identity Service to Platform, names Ina "
+                    "Okafor as service owner, and routes incidents to platform-primary."
+                ),
+                "timestamp": _ts(17, 8, 45),
+                "extra_metadata": {"tier": "1", "pager": "platform-primary"},
+            },
+            {
+                "id": "evidence-ownership-storefront",
+                "organization_id": organization.id,
+                "author_id": users["user-sam"].id,
+                "evidence_type": "ownership_metadata",
+                "source": "catalog",
+                "source_reference": "services/storefront-web",
+                "title": "Storefront ownership metadata for express checkout",
+                "summary": (
+                    "Growth owns the storefront integration, with Sam Patel as the "
+                    "rollout contact for the express checkout experiment."
+                ),
+                "timestamp": _ts(17, 9, 0),
+                "extra_metadata": {"tier": "2", "pager": "growth-primary"},
+            },
+            {
+                "id": "evidence-ownership-observability",
+                "organization_id": organization.id,
+                "author_id": users["user-zoe"].id,
+                "evidence_type": "ownership_metadata",
+                "source": "catalog",
+                "source_reference": "repositories/observability-config",
+                "title": "Checkout observability ownership metadata",
+                "summary": (
+                    "SRE owns the checkout alerts and deployment dashboards, with "
+                    "Zoe Kim as the escalation contact for rollout guardrails."
+                ),
+                "timestamp": _ts(17, 9, 15),
+                "extra_metadata": {"tier": "1", "pager": "sre-primary"},
+            },
+            {
+                "id": "evidence-ownership-experiment-platform",
+                "organization_id": organization.id,
+                "author_id": users["user-sam"].id,
+                "evidence_type": "ownership_metadata",
+                "source": "catalog",
+                "source_reference": "services/experiment-platform",
+                "title": "Experiment Platform rollout ownership metadata",
+                "summary": (
+                    "Growth owns audience configuration while Payments approves "
+                    "checkout exposure changes that affect authorization paths."
+                ),
+                "timestamp": _ts(17, 9, 30),
+                "extra_metadata": {"tier": "2", "pager": "growth-primary"},
             },
         ]
     }
@@ -782,6 +1446,193 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
                 "active": True,
                 "extra_metadata": {},
             },
+            {
+                "id": "rel-payments-owns-payment-routing",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-team-payments",
+                "target_entity_id": "entity-service-payment-routing",
+                "relationship_type": "owns",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-platform-owns-session",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-team-platform",
+                "target_entity_id": "entity-service-session",
+                "relationship_type": "owns",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-growth-owns-experiment-platform",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-team-growth",
+                "target_entity_id": "entity-service-experiment",
+                "relationship_type": "owns",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-platform-owns-notifications",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-team-platform",
+                "target_entity_id": "entity-service-notifications",
+                "relationship_type": "owns",
+                "provenance": "explicit",
+                "strength": "moderate",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-checkout-depends-payment-routing",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-service-checkout",
+                "target_entity_id": "entity-service-payment-routing",
+                "relationship_type": "depends_on",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {"reason": "gateway selection and fallback"},
+            },
+            {
+                "id": "rel-identity-depends-session",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-service-identity",
+                "target_entity_id": "entity-service-session",
+                "relationship_type": "depends_on",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {"reason": "authenticated customer session"},
+            },
+            {
+                "id": "rel-storefront-uses-experiment-platform",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-repo-webapp",
+                "target_entity_id": "entity-service-experiment",
+                "relationship_type": "uses",
+                "provenance": "explicit",
+                "strength": "moderate",
+                "active": True,
+                "extra_metadata": {"reason": "express checkout audience control"},
+            },
+            {
+                "id": "rel-fallback-depends-checkout",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-feature-graceful-fallback",
+                "target_entity_id": "entity-service-checkout",
+                "relationship_type": "depends_on",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-rfc-documents-fallback",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-rfc-feature-rollout",
+                "target_entity_id": "entity-feature-graceful-fallback",
+                "relationship_type": "documents",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-auth-incident-affects-identity",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-incident-auth-latency",
+                "target_entity_id": "entity-service-identity",
+                "relationship_type": "affects",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-risk-incident-affects-risk",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-incident-risk-degradation",
+                "target_entity_id": "entity-service-risk",
+                "relationship_type": "affects",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-routing-incident-affects-payment-routing",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-incident-routing-rollback",
+                "target_entity_id": "entity-service-payment-routing",
+                "relationship_type": "affects",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-deployment-deploys-identity",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-deployment-identity",
+                "target_entity_id": "entity-service-identity",
+                "relationship_type": "deploys",
+                "provenance": "explicit",
+                "strength": "strong",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-deployment-deploys-storefront",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-deployment-storefront",
+                "target_entity_id": "entity-repo-webapp",
+                "relationship_type": "deploys",
+                "provenance": "explicit",
+                "strength": "moderate",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-pr-storefront-affects-checkout",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-pr-storefront-287",
+                "target_entity_id": "entity-service-checkout",
+                "relationship_type": "affects",
+                "provenance": "explicit",
+                "strength": "moderate",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-pr-identity-affects-identity",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-pr-identity-204",
+                "target_entity_id": "entity-service-identity",
+                "relationship_type": "affects",
+                "provenance": "explicit",
+                "strength": "moderate",
+                "active": True,
+                "extra_metadata": {},
+            },
+            {
+                "id": "rel-pr-observability-affects-checkout",
+                "organization_id": organization.id,
+                "source_entity_id": "entity-pr-observability-96",
+                "target_entity_id": "entity-service-checkout",
+                "relationship_type": "affects",
+                "provenance": "explicit",
+                "strength": "moderate",
+                "active": True,
+                "extra_metadata": {},
+            },
         ]
     }
 
@@ -923,6 +1774,158 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
         },
     )
 
+    _upsert_reasoning_session(
+        session,
+        {
+            "id": "reasoning-rollout-readiness-review",
+            "organization_id": organization.id,
+            "pull_request_id": pull_requests["pr-storefront-web-287"].id,
+            "question": "Is the express checkout fallback rollout ready to widen?",
+            "pattern": "rollout_readiness",
+            "status": "completed",
+            "context_metadata": {
+                "focus_pull_request_id": "pr-storefront-web-287",
+                "expected_context": ["rollout", "ownership", "fallback behavior"],
+            },
+            "report": {
+                "schema_version": "1.0",
+                "answer": (
+                    "The fallback path is ready for a controlled expansion once the "
+                    "rollout checklist is updated with the named rollback owner."
+                ),
+                "model": "seeded-review",
+                "provider": "seed",
+                "impact_level": "low",
+                "confidence": "high",
+                "findings": [
+                    {
+                        "id": "finding-rollout-checklist-owner",
+                        "title": "Add the rollback owner to the express checkout rollout checklist",
+                        "summary": (
+                            "SRE deployment guardrails are in place; recording the "
+                            "Payments rollback owner will complete the handoff."
+                        ),
+                        "impact": "low",
+                        "confidence": "high",
+                        "entity_ids": [
+                            "entity-service-checkout",
+                            "entity-feature-graceful-fallback",
+                        ],
+                        "evidence_ids": [
+                            "evidence-slack-deployment-plan",
+                            "evidence-slack-rollout-coordination",
+                        ],
+                        "signal_ids": [],
+                        "assumption_ids": [],
+                    },
+                    {
+                        "id": "finding-rollout-documentation",
+                        "title": "Publish the fallback ownership note before the next rollout step",
+                        "summary": (
+                            "The deployment plan is ready; adding the named Payments "
+                            "owner to the rollout note will keep the handoff explicit."
+                        ),
+                        "impact": "low",
+                        "confidence": "high",
+                        "entity_ids": [
+                            "entity-service-checkout",
+                            "entity-service-payment-routing",
+                        ],
+                        "evidence_ids": [
+                            "evidence-slack-deployment-plan",
+                            "evidence-ownership-checkout",
+                        ],
+                        "signal_ids": [],
+                        "assumption_ids": [],
+                    },
+                ],
+            },
+            "completed_at": _ts(19, 11, 45),
+        },
+    )
+
+    for session_id, pull_request_id, question, day in [
+        (
+            "reasoning-auth-latency-review",
+            "pr-identity-service-204",
+            "What changed after the identity latency mitigation?",
+            9,
+        ),
+        (
+            "reasoning-risk-timeout-review",
+            "pr-observability-config-96",
+            "Are checkout risk timeout guardrails observable?",
+            11,
+        ),
+        (
+            "reasoning-routing-rollback-review",
+            "pr-checkout-api-482",
+            "What safeguards address the payment routing rollback?",
+            12,
+        ),
+        (
+            "reasoning-storefront-experiment-review",
+            "pr-storefront-web-271",
+            "Which teams must coordinate the express checkout experiment?",
+            13,
+        ),
+        (
+            "reasoning-trust-claims-review",
+            "pr-identity-service-133",
+            "What checkout dependencies use session trust claims?",
+            14,
+        ),
+        (
+            "reasoning-slo-coverage-review",
+            "pr-observability-config-96",
+            "Do the checkout SLOs cover the new fallback path?",
+            15,
+        ),
+        (
+            "reasoning-incident-follow-up",
+            "pr-checkout-api-482",
+            "What operational follow-up remains from the risk incident?",
+            16,
+        ),
+        (
+            "reasoning-reviewer-coverage",
+            "pr-identity-service-133",
+            "Is reviewer coverage clear for checkout trust-claim changes?",
+            17,
+        ),
+        (
+            "reasoning-rollout-guardrails",
+            "pr-storefront-web-287",
+            "Are deployment guardrails ready for the next audience step?",
+            18,
+        ),
+        (
+            "reasoning-fallback-contract-review",
+            "pr-storefront-web-287",
+            "Does the storefront honor the agreed checkout fallback contract?",
+            19,
+        ),
+    ]:
+        _upsert_reasoning_session(
+            session,
+            {
+                "id": session_id,
+                "organization_id": organization.id,
+                "pull_request_id": pull_requests[pull_request_id].id,
+                "question": question,
+                "pattern": "historical_review",
+                "status": "completed",
+                "context_metadata": {"historical": True},
+                "report": {
+                    "impact_level": "low",
+                    "confidence": "high",
+                    "findings": [],
+                },
+                "created_at": _ts(day, 10, 0),
+                "completed_at": _ts(day, 10, 15),
+            },
+        )
+
     session.flush()
 
     entity_evidence_links = {
@@ -938,17 +1941,51 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
             "evidence-pr-checkout-482",
             "evidence-incident-checkout-latency",
             "evidence-slack-risk-review",
+            "evidence-incident-risk-degradation",
+            "evidence-ownership-risk-engine",
+            "evidence-slack-incident-follow-up",
         ],
-        "entity-service-identity": ["evidence-pr-checkout-482"],
+        "entity-service-identity": [
+            "evidence-pr-checkout-482",
+            "evidence-pr-identity-133",
+            "evidence-pr-identity-204",
+            "evidence-incident-auth-latency",
+            "evidence-ownership-identity",
+            "evidence-slack-reviewer-coverage",
+        ],
+        "entity-service-payment-routing": [
+            "evidence-incident-routing-rollback",
+            "evidence-ownership-risk-engine",
+            "evidence-slack-rollout-coordination",
+        ],
+        "entity-service-experiment": [
+            "evidence-incident-flag-exposure",
+            "evidence-ownership-experiment-platform",
+            "evidence-slack-rollout-coordination",
+        ],
         "entity-feature-express-checkout": [
             "evidence-rfc-checkout-routing",
             "evidence-pr-storefront-271",
+            "evidence-pr-storefront-287",
+            "evidence-incident-flag-exposure",
+        ],
+        "entity-feature-graceful-fallback": [
+            "evidence-pr-storefront-287",
+            "evidence-slack-architecture-decision",
         ],
         "entity-runbook-checkout": ["evidence-runbook-checkout"],
         "entity-incident-checkout-latency": ["evidence-incident-checkout-latency"],
         "entity-deployment-checkout": ["evidence-deployment-checkout"],
         "entity-person-maya": ["evidence-rfc-checkout-routing"],
         "entity-person-noah": ["evidence-slack-risk-review"],
+        "entity-pr-storefront-287": ["evidence-pr-storefront-287"],
+        "entity-pr-identity-204": ["evidence-pr-identity-204"],
+        "entity-pr-observability-96": ["evidence-pr-observability-96"],
+        "entity-incident-auth-latency": ["evidence-incident-auth-latency"],
+        "entity-incident-risk-degradation": ["evidence-incident-risk-degradation"],
+        "entity-incident-routing-rollback": ["evidence-incident-routing-rollback"],
+        "entity-incident-flag-exposure": ["evidence-incident-flag-exposure"],
+        "entity-incident-webhook-backlog": ["evidence-incident-webhook-backlog"],
     }
 
     for entity_id, evidence_ids in entity_evidence_links.items():
@@ -972,6 +2009,31 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
         "rel-noah-reviews-risk": ["evidence-slack-risk-review"],
         "rel-sre-responded-checkout-incident": ["evidence-incident-checkout-latency"],
         "rel-deployment-deploys-checkout": ["evidence-deployment-checkout"],
+        "rel-checkout-depends-payment-routing": [
+            "evidence-rfc-checkout-routing",
+            "evidence-incident-routing-rollback",
+            "evidence-slack-rollout-coordination",
+        ],
+        "rel-identity-depends-session": [
+            "evidence-pr-identity-133",
+            "evidence-incident-auth-latency",
+        ],
+        "rel-storefront-uses-experiment-platform": [
+            "evidence-pr-storefront-271",
+            "evidence-ownership-experiment-platform",
+        ],
+        "rel-fallback-depends-checkout": [
+            "evidence-pr-storefront-287",
+            "evidence-slack-architecture-decision",
+        ],
+        "rel-auth-incident-affects-identity": ["evidence-incident-auth-latency"],
+        "rel-risk-incident-affects-risk": ["evidence-incident-risk-degradation"],
+        "rel-routing-incident-affects-payment-routing": ["evidence-incident-routing-rollback"],
+        "rel-deployment-deploys-identity": ["evidence-pr-identity-204"],
+        "rel-deployment-deploys-storefront": ["evidence-pr-storefront-287"],
+        "rel-pr-storefront-affects-checkout": ["evidence-pr-storefront-287"],
+        "rel-pr-identity-affects-identity": ["evidence-pr-identity-204"],
+        "rel-pr-observability-affects-checkout": ["evidence-pr-observability-96"],
     }
 
     for relationship_id, evidence_ids in relationship_evidence_links.items():
@@ -1048,7 +2110,7 @@ def seed_demo_organization(session: Session) -> dict[str, int]:
         "relationships": len(relationships),
         "signals": len(signals),
         "assumptions": len(assumptions),
-        "reasoning_sessions": 1,
+        "reasoning_sessions": 12,
     }
 
 

@@ -38,9 +38,6 @@ export function RiskCard({ risk, onSelectEvidence }: RiskCardProps) {
         </div>
         <div className="shrink-0 text-right">
           <div className="text-xs uppercase text-risk">{risk.impact}</div>
-          <div className="mt-1 text-xs text-confidence">
-            {risk.confidence} confidence
-          </div>
         </div>
       </div>
 

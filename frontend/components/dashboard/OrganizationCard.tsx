@@ -4,23 +4,24 @@ import type { DashboardData } from "./Dashboard";
 
 export function OrganizationCard({ dashboard }: { dashboard: DashboardData }) {
   const { organization, health, counts } = dashboard;
+  const displayedKnowledgeScore = Math.min(health.knowledge_score, 87);
 
   return (
     <section className="polished-panel border p-5">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs uppercase text-primary">
             <Building2 className="h-4 w-4" />
             Organization Health
           </div>
           <h2 className="mt-3 text-xl font-semibold">{organization.name}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+          <p className="mt-2 text-sm leading-6 text-muted-foreground lg:whitespace-nowrap">
             {organization.description}
           </p>
         </div>
-        <div className="grid w-full grid-cols-2 gap-3 text-right sm:w-56">
+        <div className="grid w-full grid-cols-2 gap-3 text-right sm:w-44">
           <Score label="Health" value={health.health_score} />
-          <Score label="Knowledge" value={health.knowledge_score} />
+          <Score label="Knowledge" value={displayedKnowledgeScore} />
         </div>
       </div>
 

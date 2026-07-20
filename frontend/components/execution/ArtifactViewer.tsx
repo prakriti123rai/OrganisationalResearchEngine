@@ -74,11 +74,6 @@ export function ArtifactViewer({
           {execution.logs ?? "No execution logs recorded."}
         </pre>
       </section>
-
-      <div className="mt-4 border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
-        Mock execution only. No production systems, repositories, Slack
-        workspaces, or runbooks were modified.
-      </div>
     </aside>
   );
 }

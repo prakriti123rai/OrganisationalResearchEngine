@@ -173,6 +173,13 @@ function PullRequestPanel({
           </article>
         ))}
       </div>
+      <Button
+        className="mt-3 h-8 border border-border px-3 text-xs"
+        type="button"
+        variant="ghost"
+      >
+        Read More
+      </Button>
     </section>
   );
 }

@@ -192,19 +192,19 @@ const nodeTypeOrder = [
 ];
 
 const nodeColors: Record<string, string> = {
-  organization: "#60a5fa",
-  team: "#38bdf8",
-  person: "#a78bfa",
-  repository: "#f59e0b",
-  pull_request: "#fb7185",
-  service: "#34d399",
-  feature: "#facc15",
-  external_dependency: "#f97316",
-  rfc: "#c084fc",
-  runbook: "#2dd4bf",
-  incident: "#f87171",
-  deployment: "#22c55e",
-  document: "#94a3b8",
+  organization: "#1d4ed8",
+  team: "#0f766e",
+  person: "#475569",
+  repository: "#475569",
+  pull_request: "#9f1239",
+  service: "#1d4ed8",
+  feature: "#0f766e",
+  external_dependency: "#475569",
+  rfc: "#475569",
+  runbook: "#475569",
+  incident: "#9f1239",
+  deployment: "#0f766e",
+  document: "#475569",
 };
 
 function apiUrl(path: string) {
@@ -527,7 +527,7 @@ export default function Home() {
       </aside>
 
       <section className="flex min-w-0 flex-1 flex-col px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
-        <header className="flex flex-col gap-5 border-b border-border pb-6 md:flex-row md:items-start md:justify-between">
+        <header className="flex flex-col gap-5 border-b border-border pb-5 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-2xl font-semibold">
               {activeView === "dashboard" && "Organizational Dashboard"}
@@ -1224,9 +1224,7 @@ function GraphExplorer({
         <div className="flex h-12 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-3">
             <Network className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold">
-              Neo4j Organizational Graph
-            </span>
+            <span className="text-sm font-semibold">Organizational Graph</span>
             <Pill>{graph?.node_count ?? 0} nodes</Pill>
             <Pill>{graph?.edge_count ?? 0} edges</Pill>
           </div>
@@ -1254,7 +1252,7 @@ function GraphExplorer({
             nodes={nodes}
             nodesDraggable
           >
-            <Background color="#334155" gap={22} />
+            <Background color="#26354a" gap={24} />
             <Controls />
             <MiniMap
               maskColor="rgba(8, 13, 23, 0.7)"
@@ -1318,17 +1316,17 @@ function buildFlowGraph(graph: OrganizationalGraph | null): {
         label: `${node.display_name}\n${titleCase(node.entity_type)}`,
       },
       position: {
-        x: column * 230,
-        y: band * 250 + row * 98 + (column % 2) * 26,
+        x: column * 260,
+        y: band * 340 + row * 128 + (column % 2) * 34,
       },
       style: {
         width: 180,
         minHeight: 58,
         borderRadius: 6,
-        border: "1px solid rgba(148, 163, 184, 0.55)",
+        border: "1px solid rgba(191, 219, 254, 0.42)",
         background: nodeColors[node.entity_type] ?? "#64748b",
-        boxShadow: "0 16px 32px rgba(0, 0, 0, 0.28)",
-        color: "#06111f",
+        boxShadow: "0 14px 30px rgba(0, 0, 0, 0.32)",
+        color: "#eff6ff",
         fontSize: 12,
         fontWeight: 700,
         whiteSpace: "pre-line",
@@ -1348,11 +1346,12 @@ function buildFlowGraph(graph: OrganizationalGraph | null): {
       edge.relationship_type === "depends_on",
     interactionWidth: 18,
     style: {
-      stroke: edge.relationship_type === "affects" ? "#fb7185" : "#93c5fd",
+      stroke: edge.relationship_type === "affects" ? "#c2415c" : "#7c8da3",
       strokeWidth: edge.strength === "strong" ? 2.5 : 1.5,
+      strokeDasharray: "6 5",
     },
     labelStyle: {
-      fill: "#dbeafe",
+      fill: "#cbd5e1",
       fontSize: 11,
       fontWeight: 600,
     },

@@ -3,25 +3,25 @@ import { Network } from "lucide-react";
 import type { GraphPreviewData } from "./Dashboard";
 
 const previewColors: Record<string, string> = {
-  organization: "#60a5fa",
-  team: "#38bdf8",
-  person: "#a78bfa",
-  repository: "#f59e0b",
-  pull_request: "#fb7185",
-  service: "#34d399",
-  feature: "#facc15",
-  external_dependency: "#f97316",
-  rfc: "#c084fc",
-  runbook: "#2dd4bf",
-  incident: "#f87171",
-  deployment: "#22c55e",
+  organization: "#1d4ed8",
+  team: "#0f766e",
+  person: "#475569",
+  repository: "#475569",
+  pull_request: "#9f1239",
+  service: "#1d4ed8",
+  feature: "#0f766e",
+  external_dependency: "#475569",
+  rfc: "#475569",
+  runbook: "#475569",
+  incident: "#9f1239",
+  deployment: "#0f766e",
 };
 
 export function GraphPreview({ graph }: { graph: GraphPreviewData }) {
   const positionedNodes = graph.nodes.map((node, index) => ({
     ...node,
-    x: 8 + (index % 4) * 23,
-    y: 12 + Math.floor(index / 4) * 30,
+    x: 5 + (index % 4) * 24,
+    y: 8 + Math.floor(index / 4) * 25,
   }));
   const nodesById = new Map(positionedNodes.map((node) => [node.id, node]));
 
@@ -37,7 +37,7 @@ export function GraphPreview({ graph }: { graph: GraphPreviewData }) {
         </div>
       </div>
 
-      <div className="relative h-72 overflow-hidden border border-border bg-background">
+      <div className="relative h-[30rem] overflow-hidden border border-border bg-background/70">
         <svg className="absolute inset-0 h-full w-full" role="img">
           {graph.edges.slice(0, 16).map((edge, index) => {
             const source = nodesById.get(edge.source_entity_id);
@@ -49,9 +49,10 @@ export function GraphPreview({ graph }: { graph: GraphPreviewData }) {
               <line
                 key={edge.id}
                 stroke={
-                  edge.relationship_type === "affects" ? "#fb7185" : "#64748b"
+                  edge.relationship_type === "affects" ? "#c2415c" : "#718096"
                 }
                 strokeWidth={edge.strength === "strong" ? 2 : 1}
+                strokeDasharray="5 5"
                 style={{
                   animation: `fadeIn 260ms ease-out ${index * 45}ms both`,
                 }}
@@ -65,7 +66,7 @@ export function GraphPreview({ graph }: { graph: GraphPreviewData }) {
         </svg>
         {positionedNodes.map((node, index) => (
           <div
-            className="interactive-card absolute max-w-32 border border-border px-2 py-1 text-xs font-semibold text-background"
+            className="interactive-card absolute max-w-28 border border-slate-300/30 px-2 py-1 text-xs font-semibold text-slate-100 shadow-[0_8px_18px_rgba(0,0,0,0.2)]"
             key={node.id}
             style={{
               background: previewColors[node.entity_type] ?? "#94a3b8",

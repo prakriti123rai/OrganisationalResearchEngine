@@ -174,11 +174,6 @@ export function ApprovalPanel({
           Reject
         </button>
       </div>
-
-      <div className="mt-4 border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
-        Approval starts safe Codex artifact generation. Production systems stay
-        untouched.
-      </div>
     </aside>
   );
 }

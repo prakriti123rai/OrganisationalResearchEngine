@@ -50,9 +50,6 @@ export function AffectedServices({
                 <div className="text-xs uppercase text-risk">
                   {service.riskLevel}
                 </div>
-                <div className="mt-1 text-xs text-confidence">
-                  {service.confidence}
-                </div>
               </div>
             </div>
 
