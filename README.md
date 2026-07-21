@@ -4,6 +4,7 @@
 
 - [Vision](#vision)
 - [At a Glance](#at-a-glance)
+- [How ORE Was Designed and Built with GPT-5.6 & Codex](#how-ore-was-designed-and-built-with-gpt-56--codex)
 - [The Organizational Reasoning Problem](#the-organizational-reasoning-problem)
 - [Core Concepts](#core-concepts)
 - [Product Tour](#product-tour)
@@ -15,7 +16,6 @@
 - [Design Decisions & Engineering Trade-offs](#design-decisions--engineering-trade-offs)
 - [Roadmap & Future Work](#roadmap--future-work)
 - [Closing Thoughts](#closing-thoughts)
-
 ### Organizational Reasoning Engine
 
 > **An AI system that builds an evidence-backed understanding of how an organization actually works—before it reasons, recommends, or acts.**
@@ -215,8 +215,6 @@ By exposing this reasoning pipeline, ORE enables engineers to inspect, validate,
 ---
 
 ## At a Glance
-## At a Glance
-
 | | |
 |---|---|
 | **Problem** | Engineering knowledge is fragmented across repositories, documentation, incidents, pull requests, and people, making organizational reasoning difficult for both humans and AI systems. |
@@ -226,6 +224,190 @@ By exposing this reasoning pipeline, ORE enables engineers to inspect, validate,
 | **Execution Model** | Human-approved execution boundary with deterministic artifact generation and complete reasoning traceability. |
 | **Primary Goal** | Demonstrate how AI systems can reason about organizations rather than simply retrieve organizational information. |
 
+---
+## How ORE Was Designed and Built with GPT-5.6 & Codex
+
+One of the goals of OpenAI Build Week is not simply to build an application *using* GPT-5.6 and Codex, but to explore what modern AI-assisted software engineering can look like in practice.
+
+ORE was intentionally built around that philosophy.
+
+Rather than treating GPT-5.6 as a feature inside the application and Codex as a code generator, this project used both as integral parts of the complete engineering lifecycle—from product ideation and architectural design to implementation, testing, refinement, and documentation.
+
+The result is not simply an application powered by GPT-5.6.
+
+It is a project whose product vision, engineering process, implementation, and final software were developed through a deliberate collaboration between human engineering judgment, GPT-5.6, and Codex.
+
+---
+
+### At a Glance
+
+| Component | Role Throughout Development |
+|-----------|-----------------------------|
+| **GPT-5.6** | Product ideation, reasoning philosophy, system architecture, design freeze, implementation planning, technical writing, design refinement, and engineering decision support. |
+| **Codex** | Primary implementation engine responsible for generating the project's codebase through milestone-driven development, debugging, refactoring, code reviews, and iterative engineering execution. |
+| **Developer** | Product vision, problem selection, architectural direction, milestone definition, prompt engineering, implementation validation, testing, quality assurance, and final engineering decisions. |
+
+---
+
+### Designing ORE with GPT-5.6
+
+Before writing any code, the project was intentionally designed using GPT-5.6 as a collaborative engineering and product design partner.
+
+Instead of immediately implementing features, development began with a more fundamental question:
+
+> **How should an AI system reason about an organization rather than simply retrieve organizational information?**
+
+Over many iterative design sessions, GPT-5.6 helped transform that question into a coherent product architecture.
+
+Together, this process produced:
+
+- the core philosophy behind Organizational Reasoning,
+- the evidence-first reasoning model,
+- the layered organizational knowledge architecture,
+- the overall system architecture,
+- the organizational graph model,
+- the reasoning pipeline,
+- the execution workflow,
+- the product experience,
+- and the engineering principles that guided every subsequent implementation decision.
+
+Rather than allowing the architecture to emerge during implementation, the project's major technical decisions were intentionally documented, reviewed, refined, and frozen before development began.
+
+This resulted in a comprehensive design specification describing the product vision, evidence model, reasoning engine, system architecture, implementation strategy, and engineering philosophy before the first milestone was implemented.
+
+---
+
+### From Design to Implementation
+
+Once the architecture had been finalized, GPT-5.6 was used to transform the design specification into an actionable engineering roadmap.
+
+Instead of implementing the application as one large task, the project was decomposed into a sequence of well-defined implementation milestones.
+
+Each milestone represented a self-contained engineering objective with clearly defined functionality, implementation requirements, acceptance criteria, and verification steps.
+
+This ensured that implementation followed the architecture, rather than allowing the architecture to evolve unpredictably during development.
+
+The overall engineering workflow followed the process below:
+
+```text
+Problem Definition
+        │
+        ▼
+Product Vision
+        │
+        ▼
+Architecture Design
+        │
+        ▼
+Design Freeze
+        │
+        ▼
+Implementation Plan
+        │
+        ▼
+Milestone Specification
+        │
+        ▼
+Codex Implementation
+        │
+        ▼
+Testing & Validation
+        │
+        ▼
+Review & Refinement
+        │
+        ▼
+Next Milestone
+```
+
+This milestone-driven workflow allowed architectural consistency to be maintained throughout the project while enabling rapid and iterative implementation.
+
+### Building ORE with Codex
+
+After the architecture and implementation roadmap had been established, **Codex became the primary implementation engine for the project.**
+
+Rather than generating the application in a single prompt, every feature was developed through an iterative milestone-based workflow.
+
+Each milestone was accompanied by detailed engineering specifications describing:
+
+- the objective,
+- expected architecture,
+- implementation constraints,
+- functional requirements,
+- acceptance criteria,
+- and verification steps.
+
+Codex then translated those specifications into working software.
+
+For every milestone, the development workflow remained consistent:
+
+1. Define the engineering objective.
+2. Prepare a detailed implementation specification.
+3. Ask Codex to implement the milestone.
+4. Review the generated implementation.
+5. Test and validate the functionality locally.
+6. Refine or iterate where necessary.
+7. Commit the completed milestone before beginning the next.
+
+This disciplined process preserved architectural consistency across the repository while allowing implementation to progress rapidly.
+
+From the initial project scaffold to the final application, **every implementation contained within this repository was produced through Codex-assisted development.**
+
+Throughout the project, Codex was used for:
+
+- frontend implementation,
+- backend implementation,
+- REST API development,
+- database models,
+- reasoning pipeline implementation,
+- Docker configuration,
+- debugging,
+- refactoring,
+- code reviews,
+- iterative improvements,
+- documentation support,
+- and general engineering execution across every milestone.
+
+### Human + AI Engineering Workflow
+
+Although GPT-5.6 and Codex performed much of the architectural exploration and implementation work, they were never treated as autonomous replacements for engineering judgment.
+
+Instead, the project followed a collaborative workflow in which each participant had clearly defined responsibilities.
+
+The developer remained responsible for:
+
+- identifying the problem worth solving,
+- defining the product vision,
+- evaluating architectural alternatives,
+- establishing system boundaries,
+- defining implementation milestones,
+- reviewing generated implementations,
+- validating functionality,
+- refining prompts,
+- and making the final engineering decisions throughout the project.
+
+GPT-5.6 contributed architectural reasoning, implementation planning, product refinement, and technical design.
+
+Codex translated those engineering specifications into working software through iterative implementation.
+
+This separation allowed each participant to contribute where they were strongest while keeping the overall architecture intentional, coherent, and internally consistent.
+
+### Why This Workflow Matters
+
+ORE explores organizational reasoning as a product.
+
+Building ORE also became an exploration of modern AI-assisted software engineering.
+
+Rather than asking GPT-5.6 to generate isolated ideas or asking Codex to produce isolated code snippets, the project treated AI as a collaborative engineering partner throughout the complete software development lifecycle.
+
+The resulting workflow combined:
+
+- human product vision,
+- GPT-5.6 for product thinking, architectural reasoning, and implementation planning,
+- Codex for engineering execution and iterative implementation,
+- and continuous testing, validation, and refinement after every milestone.
+
+Interestingly, the same principles that define ORE itself—structured reasoning, deliberate planning, transparency, modular design, and iterative refinement—also became the principles that guided how ORE was designed and built.
 ---
 
 # The Organizational Reasoning Problem
