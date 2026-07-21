@@ -12,6 +12,7 @@
 - [The Organizational Reasoning Engine](#the-organizational-reasoning-engine)
 - [AI Architecture](#ai-architecture)
 - [Repository & Codebase Guide](#repository--codebase-guide)
+- [Running ORE Locally](#running-ore-locally)
 - [Engineering Deep Dive](#engineering-deep-dive)
 - [Design Decisions & Engineering Trade-offs](#design-decisions--engineering-trade-offs)
 - [Roadmap & Future Work](#roadmap--future-work)
@@ -2361,6 +2362,63 @@ If you're exploring ORE for the first time, the following order provides the qui
 8. Examine the database models.
 
 By following this progression, you'll move through the repository in the same order that organizational reasoning flows through the application itself.
+
+## Running ORE Locally
+
+ORE is designed to run entirely through Docker, making local setup straightforward.
+
+### Prerequisites
+
+Before starting, ensure the following are installed:
+
+- Docker
+- Docker Compose
+- An OpenAI API key with access to GPT-5.6
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd ORE
+```
+
+### 2. Configure Environment Variables
+
+Create a `.env` file in the project root (or copy the provided example if available) and configure your OpenAI API key.
+
+```env
+OPENAI_API_KEY=your_api_key_here
+```
+
+> **Important:** ORE does **not** include an OpenAI API key. To run the reasoning pipeline locally, you must provide your own API key with access to GPT-5.6.
+
+### 3. Start the Application
+
+```bash
+docker compose up --build
+```
+
+This will start:
+
+- Frontend
+- FastAPI Backend
+- PostgreSQL
+- Neo4j
+
+### 4. Open the Application
+
+Once the containers are running, open:
+
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:8000
+- **Backend Health Check:** http://localhost:8000/health
+- **Neo4j Browser:** http://localhost:7474
+
+### Notes
+
+- The repository ships with sample organizational data for demonstration purposes.
+- The reasoning pipeline requires a valid OpenAI API key.
+- All generated outputs remain local to your environment unless you explicitly connect additional external services.
 
 # Engineering Deep Dive
 
